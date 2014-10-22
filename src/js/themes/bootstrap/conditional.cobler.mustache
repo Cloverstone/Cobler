@@ -1,0 +1,85 @@
+<div>
+<div class="col-md-6" style="padding-right: 5px;">
+	<div class="well arrow_box arrow_box_bottom">
+		<h4>If <span style="font-size:55%;color:#888">Lead Search meets the following criteria</span></h4>
+		{{#conditions}}
+		 <div class="condition-item"><b>{{condition}}:</b> {{value}}</div>
+		{{/conditions}}
+	</div>
+</div>
+<div class="col-md-6">
+	<div class="well arrow_box arrow_box_left">
+		<h4>Then</h4>
+		{{#actions}}
+		 <div class="condition-item"><b>{{action}}:</b> {{subject}}</div>
+		{{/actions}}
+	</div>
+</div>
+<style>
+.condition-item{
+	line-height: 25px;
+	border-top:dashed 1px #eee;
+}
+.arrow_box {
+	position: relative;
+	background: #fff;
+	border: 4px solid #ccc;
+	color:#666;
+}
+
+.arrow_box h4{
+color: #999;
+font-size: 20px;
+line-height: 20px;
+font-weight: bold;
+
+}
+.arrow_box:after, .arrow_box:before {
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+
+.arrow_box_bottom:after, .arrow_box_bottom:before {
+	top: 100%;
+	left: 50%;
+}
+
+.arrow_box_bottom:after {
+	border-color: rgba(136, 183, 213, 0);
+	border-top-color: #fff;
+	border-width: 18px;
+	margin-left: -18px;
+}
+.arrow_box_bottom:before {
+	border-color: rgba(194, 225, 245, 0);
+	border-top-color: #ccc;
+	border-width: 24px;
+	margin-left: -24px;
+}
+
+.arrow_box_left:after, .arrow_box_left:before {
+	left: -28px;
+	top: 55px;
+}
+
+.arrow_box_left:after {
+	border-color: rgba(136, 183, 213, 0);
+	border-left-color: #fff;
+	border-width: 18px;
+	margin-top: -18px;
+}
+.arrow_box_left:before {
+	border-color: rgba(194, 225, 245, 0);
+	border-left-color: #aec;
+	border-width: 24px;
+	margin-top: -24px;
+}
+
+</style>
+
+</div>
