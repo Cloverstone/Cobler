@@ -1,4 +1,4 @@
-//		CoblerJS 0.1.1
+//		CoblerJS 0.1.2
 //		(c) 2011-2014 Adam Smallcomb
 //		Licensed under the MIT license.
 //		For all details and documentation:
@@ -113,8 +113,6 @@ function cobler(options){
 	};
 
 	this.updateWidget = function(thrower) {
-		cobler.changed = true;
-		this.trigger('change');
 		if(this.selected){
 			this.selected.toJSON();
 
@@ -133,6 +131,8 @@ function cobler(options){
 				this.selected.callback.call(this.selected);
 			}
 		}
+		cobler.changed = true;
+		this.trigger('change');
 	};
 	
 	this.deselect = function() {
@@ -414,3 +414,13 @@ $('body').keydown(function(event) {
 			break;
 	}
 });
+
+function containsKey( list , keys ){
+	var returnArray = {};
+	for (var key in keys) {
+		if(typeof list[keys[key]] !== 'undefined'){
+			returnArray[keys[key]] = list[keys[key]];
+		}
+	}
+	return returnArray;
+}
