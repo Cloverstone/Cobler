@@ -17,6 +17,7 @@ $(function(){
 		},
 		fields: [
 			{type: 'text', label: 'Field Label', name: 'label', value: 'Label'},
+			{type: 'text', label: 'Name', name: 'name'},
 			{type: 'select', label: 'Display', name: 'type', value: 'dropdown', 'choices': [
 				{label: 'Single Line', value: 'text'},
 				{label: 'Multi-line', value: 'textarea'},
@@ -26,10 +27,9 @@ $(function(){
 				{label: 'Number', value: 'number'}
 			]},
 			{type: 'text', label: 'Placeholder', name: 'placeholder'},
-			{type: 'text', label: 'Value', name: 'value'},
-			{type: 'text', label: 'Name', name: 'name'},
-			{type: 'checkbox', label: 'Required', name: 'required', inline: false},
+			{type: 'text', label: 'Default value', name: 'value'},
 			{type: 'textarea', label: 'Instructions', name: 'help'},
+			{type: 'checkbox', label: 'Required', name: 'required', inline: false},
 		],
 		template:  function(){
 			return 'berry_' + this.attributes.type;

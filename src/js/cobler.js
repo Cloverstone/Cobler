@@ -13,7 +13,7 @@ function cobler(options){
 		this.$el.find('#cb-content').remove();
 
 		if(this.options.editable){
-			this.$el.append(Berry.render('cobler_init_cobler', this,options));
+			this.$el.append(Berry.render('cobler_init', this,options));
 			$('#cb-content').sortable({
 				cursor: 'move',
 				//items: "> li:not(.selected)",
@@ -35,7 +35,7 @@ function cobler(options){
 				}
 			});//.disableSelection();
 		}else{
-			this.$el.append(Formal.render('cobler_init_cobler_noedit',this,options));
+			this.$el.append(Formal.render('cobler_init_noedit',this,options));
 		}
 	};
 
@@ -152,19 +152,21 @@ function cobler(options){
 	};
 
 	this.remove = function(id) {
-		var slice = getSlice(id) || this.selected;
+		if(!this.options.confirm || confirm("Are you sure you want to delete this widget?")){
+			var slice = getSlice(id) || this.selected;
 
-		if(slice.$el.hasClass('selected')) {
-			this.deselect();
-		}
-		if(slice){
-			slice.$el.fadeOut('fast', function() {
-				this.remove();
-				$('#cb-starter').toggle($('#cb-content > li').length === 0);
-			});
+			if(slice.$el.hasClass('selected')) {
+				this.deselect();
+			}
+			if(slice){
+				slice.$el.fadeOut('fast', function() {
+					this.remove();
+					$('#cb-starter').toggle($('#cb-content > li').length === 0);
+				});
 
-			slice.remove();
-			this.slices.splice(getSliceIndex(slice.uuid), 1);
+				slice.remove();
+				this.slices.splice(getSliceIndex(slice.uuid), 1);
+			}
 		}
 	};
 
@@ -183,7 +185,7 @@ function cobler(options){
 
 	this.addTypeDisplay = function(object){
 		if(this.options.types === 'all' || ($.inArray(object.category, this.options.types) > -1)){
-			$(Berry.render('cobler_widget_cobler', object )).appendTo('#cb-source');
+			$(Berry.render('cobler_widget', object )).appendTo('#cb-source');
 		}
 	}
 
@@ -233,7 +235,7 @@ function cobler(options){
 		return false;
 	};
 
-	this.options = $.extend({name: Berry.getUID(), types: 'all', target: '#content', axis: '', form: '#alt-sidebar', source: '#alt-sidebar', autoedit: true, associative: false, editable: true, activeFormClass: 'active'}, options);
+	this.options = $.extend({name: Berry.getUID(), types: 'all', target: '#content', axis: '', form: '#alt-sidebar', source: '#alt-sidebar', autoedit: true, associative: false, editable: true, confirm: true, activeFormClass: 'active'}, options);
 	var self = this;
 	this.selected = false;
 	this.form = false;
@@ -245,7 +247,7 @@ function cobler(options){
 	$(this.options.source).empty();
 
 	if($('#cb-source').length === 0) {
-		$(this.options.source).append(Berry.render('cobler_controls_cobler', options));
+		$(this.options.source).append(Berry.render('cobler_controls', options));
 		for(var i in cobler.types) {
 			this.addTypeDisplay(cobler.types[i].prototype);
 		}
@@ -322,11 +324,11 @@ function cobler(options){
 	});//.disableSelection();
 
 
-	window.onbeforeunload = function() {
-		if(cobler.changed){
-			return 'Any changes that you made will be lost.';
-		}
-	};
+	// window.onbeforeunload = function() {
+	// 	if(cobler.changed){
+	// 		return 'Any changes that you made will be lost.';
+	// 	}
+	// };
 
 	$(this.options.source).on('click', '#showwidgets', $.proxy(function(event){
 		this.deselect();
@@ -368,9 +370,9 @@ cobler.slice = function(owner, initial) {
 $.extend(cobler.slice.prototype, {
 	createEL: function() {
 		if(cb.options.editable) {
-			this.$el = $(Berry.render('cobler_element_cobler', this));
+			this.$el = $(Berry.render('cobler_element', this));
 		}else{
-			this.$el = $(Berry.render('cobler_element_cobler_noedit', this));
+			this.$el = $(Berry.render('cobler_element_noedit', this));
 		}
 		this.$el.find('.cobler-li-content').append(this.toHTML());
 		return this.$el;
