@@ -1,4 +1,4 @@
-//		CoblerJS 0.1.2
+//		CoblerJS 0.1.3
 //		(c) 2011-2014 Adam Smallcomb
 //		Licensed under the MIT license.
 //		For all details and documentation:
@@ -117,15 +117,15 @@ function cobler(options){
 			this.selected.toJSON();
 
 			//if(thrower.force == true || this.selected.contentFields !== true) {
-			if(thrower.force == true || this.form.find(thrower.path).force == true || this.selected.contentFields !== true) {
+			if(thrower.force == true || (typeof thrower.path !== 'undefined' && this.form.find(thrower.path).force == true) || this.selected.contentFields !== true) {
 				// /this.form.find(thrower.path).ignore
-		if(self.selected.editView){
-			this.selected.$el.find('.cobler-li-content').html(this.selected.editView());
+				if(self.selected.editView && !thrower.force){
+					this.selected.$el.find('.cobler-li-content').html(this.selected.editView());
 
-				//this.selected.$el.replaceWith($(this.selected.createEL()).addClass('selected'));
-		}else{
-				this.selected.$el.replaceWith($(this.selected.createEL()).addClass('selected'));
-		}
+						//this.selected.$el.replaceWith($(this.selected.createEL()).addClass('selected'));
+				}else{
+						this.selected.$el.replaceWith($(this.selected.createEL()).addClass('selected'));
+				}
 			}
 			if(this.selected.callback) {
 				this.selected.callback.call(this.selected);
@@ -141,12 +141,10 @@ function cobler(options){
 				this.updateWidget({force: true});
 				this.form.destroy();
 				this.form = false;
-				self.selected.blur();
 			}
-			if(self.selected){
-				self.selected.$el.removeClass('selected');
-				self.selected = false;
-			}
+			self.selected.blur();
+			self.selected.$el.removeClass('selected');
+			self.selected = false;
 			this.trigger('editComplete');
 		}
 	};
@@ -382,7 +380,7 @@ $.extend(cobler.slice.prototype, {
 	blur: function() {},
 	fields: [],
 	toFORM: function() {
-		return {label: this.display, options: {inline: false}, renderer: 'tabs', tabsTarget: $('#alt-sidebar .panel-heading'), actions: false, attributes: this.attributes, items:[], fields: this.fields};
+		return {label: this.display, options: {inline: true}, renderer: 'tabs', tabsTarget: $('#alt-sidebar .panel-heading'), actions: false, attributes: this.attributes, items:[], fields: this.fields};
 	},
 	toJSON: function() {
 		this.attributes = $.extend(this.attributes, this.owner.form.toJSON());

@@ -10,7 +10,7 @@ $(function(){
     },
     fields: [
       //{label: false, name: 'text', fieldset: 'selected .cobler-li-content',},
-      {type: 'custom_select', label: 'Form', name: 'form',reference: '_id', choices:'/forms'},
+      {type: 'select', label: 'Form', name: 'form',reference: '_id', choices:'/forms'},
     ],
     //template: '<form name="input" action="/custom_form/submit/{{_id}}" method="get">{{{content}}}<button type="submit" class="btn btn-default">Submit</button></form>',
     toHTML:  function(){
