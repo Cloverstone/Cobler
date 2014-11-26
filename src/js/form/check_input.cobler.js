@@ -10,6 +10,7 @@ $(function(){
 			help: '',
 			value: false,
 			required : false,
+			columns: 12
 		},
 		toJSON: function(){
 			cobler.slice.prototype.toJSON.call(this);
@@ -26,6 +27,9 @@ $(function(){
 			{type: 'checkbox', label: 'Default Value', name: 'value'},
 			{type: 'textarea', label: 'Instructions', name: 'help'},
 			{type: 'checkbox', label: 'Required', name: 'required', inline: false},
+			{type: 'select', label: 'Size', name: 'columns', choices: [
+				3,4,6,8,9,12
+			]},
 		],
 		template:  function(){
 			return 'berry_checkbox';

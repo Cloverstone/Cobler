@@ -9,7 +9,8 @@ $(function(){
 			type: 'select',
 			required : false,
 			help: '',
-			useName : true
+			useName : true,
+			columns: 12
 		},
 		toJSON: function(){
 			cobler.slice.prototype.toJSON.call(this);
@@ -28,6 +29,9 @@ $(function(){
 				{type: 'text', label: 'Default Value', name: 'value'},
 				{type: 'textarea', label: 'Instructions', name: 'help'},
 				{type: 'checkbox', label: 'Required', name: 'required', inline: false},
+				{type: 'select', label: 'Size', name: 'columns', choices: [
+					3,4,6,8,9,12
+				]},
 			]},
 			{type: 'fieldset',name:'choices_c', legend: '<i class="fa fa-th-list"></i> Choices', inline: true, fields:[
 				{type: 'fieldset', label: false, legend: '<i class="fa fa-square"></i> Choices', multiple: {duplicate: true}, name: 'choices_list', toArray: true, fields: [

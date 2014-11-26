@@ -121,7 +121,11 @@ function cobler(options){
 				// /this.form.find(thrower.path).ignore
 				if(self.selected.editView && !thrower.force){
 					this.selected.$el.find('.cobler-li-content').html(this.selected.editView());
-
+					if(this.selected.contentFields){
+						this.form.each(function(){
+							$('.'+this.item.fieldset).append(this.$el)
+						})
+					}
 						//this.selected.$el.replaceWith($(this.selected.createEL()).addClass('selected'));
 				}else{
 						this.selected.$el.replaceWith($(this.selected.createEL()).addClass('selected'));

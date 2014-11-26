@@ -8,7 +8,8 @@ $(function(){
 			label: 'Label',
 			type: 'text',
 			required: false,
-			help: ''
+			help: '',
+			columns: 12
 		},
 		toJSON: function(){
 			cobler.slice.prototype.toJSON.call(this);
@@ -30,6 +31,9 @@ $(function(){
 			{type: 'text', label: 'Default value', name: 'value'},
 			{type: 'textarea', label: 'Instructions', name: 'help'},
 			{type: 'checkbox', label: 'Required', name: 'required', inline: false},
+			{type: 'select', label: 'Size', name: 'columns', choices: [
+				3,4,6,8,9,12
+			]},
 		],
 		template:  function(){
 			return 'berry_' + this.attributes.type;
