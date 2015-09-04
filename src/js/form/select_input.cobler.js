@@ -24,26 +24,39 @@ $(function(){
 				{type: 'text', label: 'Name', name: 'name'},
 				{type: 'select', label: 'Display', name: 'type', value: 'dropdown', choices: [
 					{name: 'Dropdown', value: 'select'},
-					{name: 'Radio', value: 'radio'}
+					{name: 'Radio', value: 'radio'},
+					{name: 'Range', value: 'range'}
 				]},
 				{type: 'text', label: 'Default Value', name: 'value'},
+				{type: 'number', label: 'Max', name: 'max'},
+				{type: 'number', label: 'Min', name: 'min'},
+				{type: 'number', label: 'Step', name: 'step'},
 				{type: 'textarea', label: 'Instructions', name: 'help'},
 				{type: 'checkbox', label: 'Required', name: 'required', inline: false},
 				{type: 'select', label: 'Size', name: 'columns', choices: [
 					3,4,6,8,9,12
 				]},
 			]},
-			{type: 'fieldset',name:'choices_c', legend: '<i class="fa fa-th-list"></i> Choices', inline: true, fields:[
-				{type: 'fieldset', label: false, legend: '<i class="fa fa-square"></i> Choices', multiple: {duplicate: true}, name: 'choices_list', toArray: true, fields: [
-					{type: 'text', label: 'Choice', name: 'choices', toArray: true},
-				]},
-			]}
+			{type: 'fieldset', name:'choices_c', legend: '<i class="fa fa-th-list"></i> Choices', inline: true, fields:[
+				{"type": "fieldset", "label": false, "multiple": {"duplicate": true}, "name": "choices", "fields": [
+					{"label": "Name"},
+					{"label": "Value"}
+				]}
+			]},		
+
+
+
+			// {type: 'fieldset',name:'choices_c', legend: '<i class="fa fa-th-list"></i> Choices', inline: true, fields:[
+			// 	{type: 'fieldset', label: false, legend: '<i class="fa fa-square"></i> Choices', multiple: {duplicate: true}, name: 'choices_list', toArray: true, fields: [
+			// 		{type: 'text', label: 'Choice', name: 'choices', toArray: true},
+			// 	]},
+			// ]}
 		],
 		// template: function(){
 		// 	return 'berry_' + this.attributes.type;
 		// }
 		toHTML: function(publishing) {
-			return Berry.render('berry_' + this.attributes.type, Berry.processOpts($.extend({},this.attributes)));
+			return Berry.render('berry_' + this.attributes.type, Berry.processOpts($.extend(true, {}, this.attributes)));
 		}
 	});
 });

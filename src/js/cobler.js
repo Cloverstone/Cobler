@@ -337,11 +337,11 @@ function cobler(options){
 	}, this));
 
 	this.on('editComplete', function(){
-		$('#showwidgets, .panel-heading').hide();
+		$('#showwidgets, #alt-sidebar .panel-heading').hide();
 		$('#cb-source').show();
 	});
 	this.on('edit', function() {
-		$('#showwidgets, .panel-heading').show();
+		$('#showwidgets, #alt-sidebar .panel-heading').show();
 		$('#cb-source').hide();
 	});
 
@@ -384,7 +384,7 @@ $.extend(cobler.slice.prototype, {
 	blur: function() {},
 	fields: [],
 	toFORM: function() {
-		return {label: this.display, options: {inline: true}, renderer: 'tabs', tabsTarget: $('#alt-sidebar .panel-heading'), actions: false, attributes: this.attributes, items:[], fields: this.fields};
+		return {label: this.display,flatten:false, options: {inline: true}, renderer: 'tabs', tabsTarget: $('#alt-sidebar .panel-heading'), actions: false, attributes: this.attributes, items:[], fields: this.fields};
 	},
 	toJSON: function() {
 		this.attributes = $.extend(this.attributes, this.owner.form.toJSON());

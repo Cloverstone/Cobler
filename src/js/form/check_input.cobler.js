@@ -8,6 +8,7 @@ $(function(){
 			label: 'Label',
 			type: 'checkbox',
 			help: '',
+			container: 'span',
 			value: false,
 			required : false,
 			columns: 12

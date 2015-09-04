@@ -19,19 +19,6 @@ $(function(){
         {label: 'Justify', value: 'justify'},
         {label: 'Right', value: 'right'}
       ]},
-      // {type: 'select', label:'Width', name: 'width', value: '', choices:[
-      //   {name:'One Fifth',value:'1_5'},
-      //   {name:'One Quarter',value:'3'},
-      //   {name:'One Third',value:'4'},
-      //   {name:'Two Fifths',value:'2_5'},
-      //   {name:'Half',value:'6'},
-      //   {name:'Three Fifths',value:'3_5'},
-      //   {name:'Two Thirds',value:'8'},
-      //   {name:'Three Quarters',value:'9'},
-      //   {name:'Four Fifths',value:'4_5'},
-      //   {name:'Full',value:'12'}
-      // ]
-      // },    
       {type: 'custom_radio', label: 'Float', name: 'float', choices: [
         {label: 'Left', value: 'left'},
         {label: 'Right', value: 'right'}
