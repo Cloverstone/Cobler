@@ -11,7 +11,7 @@ $(function(){
 			container: 'span',
 			value: false,
 			required : false,
-			columns: 12
+			columns: '12'
 		},
 		toJSON: function(){
 			cobler.slice.prototype.toJSON.call(this);
@@ -29,7 +29,7 @@ $(function(){
 			{type: 'textarea', label: 'Instructions', name: 'help'},
 			{type: 'checkbox', label: 'Required', name: 'required', inline: false},
 			{type: 'select', label: 'Size', name: 'columns', choices: [
-				3,4,6,8,9,12
+				'3','4','6','8','9','12'
 			]},
 		],
 		template:  function(){
