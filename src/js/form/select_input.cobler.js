@@ -39,7 +39,7 @@ $(function(){
 			]},
 			{type: 'fieldset', name:'choices_c', legend: '<i class="fa fa-th-list"></i> Choices', inline: true, fields:[
 				{"type": "fieldset", "label": false, "multiple": {"duplicate": true}, "name": "choices", "fields": [
-					{"label": "Name"},
+					{"label": "Label"},
 					{"label": "Value"}
 				]}
 			]},		
