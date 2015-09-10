@@ -65,13 +65,15 @@ function cobler(options){
 		if(options.associative) {
 			json = {};
 			for(var i in this.slices) {
-				json[this.slices[i].uuid] = this.slices[i].attributes;
+				// json[this.slices[i].uuid] = this.slices[i].attributes;
+				json[this.slices[i].uuid] = this.slices[i].toJSON(true);
 			}
 			return json;
 		} else {
 			json = [];
 			for(var i in this.slices) {
-				json.push(this.slices[i].attributes);
+				// json.push(this.slices[i].attributes);
+				json.push(this.slices[i].toJSON(true));
 			}
 			return json;
 		}
@@ -384,10 +386,12 @@ $.extend(cobler.slice.prototype, {
 	blur: function() {},
 	fields: [],
 	toFORM: function() {
-		return {label: this.display,flatten:false, options: {inline: true}, renderer: 'tabs', tabsTarget: $('#alt-sidebar .panel-heading'), actions: false, attributes: this.attributes, items:[], fields: this.fields};
+		return {label: this.display, options: {inline: true}, renderer: 'tabs', tabsTarget: $('#alt-sidebar .panel-heading'), actions: false, attributes: this.attributes, items:[], fields: this.fields};
 	},
-	toJSON: function() {
-		this.attributes = $.extend(this.attributes, this.owner.form.toJSON());
+	toJSON: function(publishing) {
+		if(!publishing){
+			this.attributes = $.extend(this.attributes, this.owner.form.toJSON());
+		}
 		return this.attributes;
 	},
 	toHTML: function(publishing) {
