@@ -116,7 +116,7 @@ function cobler(options){
 
 	this.updateWidget = function(thrower) {
 		if(this.selected){
-			this.selected.toJSON();
+			this.selected.toJSON(false);
 
 			//if(thrower.force == true || this.selected.contentFields !== true) {
 			if(thrower.force == true || (typeof thrower.path !== 'undefined' && this.form.find(thrower.path).force == true) || this.selected.contentFields !== true) {
@@ -386,7 +386,7 @@ $.extend(cobler.slice.prototype, {
 	blur: function() {},
 	fields: [],
 	toFORM: function() {
-		return {label: this.display, options: {inline: true}, renderer: 'tabs', tabsTarget: $('#alt-sidebar .panel-heading'), actions: false, attributes: this.attributes, items:[], fields: this.fields};
+		return {label: this.display, inline: true, renderer: 'tabs', tabsTarget: $('#alt-sidebar .panel-heading'), actions: false, attributes: this.attributes, items:[], fields: this.fields};
 	},
 	toJSON: function(publishing) {
 		if(!publishing){
@@ -397,9 +397,9 @@ $.extend(cobler.slice.prototype, {
 	toHTML: function(publishing) {
 		if(typeof this.template !== 'undefined') {
 			if(typeof this.template === 'string') {
-				return Berry.render(this.template, this.attributes);
+				return Berry.render(this.template, $.extend({},this.filter,this.attributes));
 			} else {
-				return Berry.render(this.template(), this.attributes);
+				return Berry.render(this.template(), $.extend({},this.filter,this.attributes));
 			}
 		}
 		return $('<div/>');

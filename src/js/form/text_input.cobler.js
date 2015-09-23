@@ -23,9 +23,11 @@ $(function(){
 		},
 		toJSON: function(publishing){
 			cobler.slice.prototype.toJSON.call(this, publishing);
-			for(var i in this.filter){
-				if(this.filter[i] === this.attributes[i]){
-					delete this.attributes[i];
+			if(publishing) {
+				for(var i in this.filter){
+					if(this.filter[i] === this.attributes[i]){
+						delete this.attributes[i];
+					}
 				}
 			}
 			return this.attributes;
@@ -45,7 +47,7 @@ $(function(){
 			{type: 'text', label: 'Placeholder', name: 'placeholder'},
 			{type: 'text', label: 'Default value', name: 'value'},
 			{type: 'textarea', label: 'Instructions', name: 'help'},
-			{type: 'checkbox', label: 'Required', name: 'required', inline: false},
+			{type: 'checkbox', label: 'Required', name: 'required'},
 			// {type: 'select', label: 'Size', name: 'columns', choices: [
 			// 	'3','4','6','8','9','12'
 			// ]},
