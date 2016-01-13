@@ -35,7 +35,7 @@ function cobler(options){
 				}
 			});//.disableSelection();
 		}else{
-			this.$el.append(Formal.render('cobler_init_noedit',this,options));
+			this.$el.append(Berry.render('cobler_init_noedit',this,options));
 		}
 	};
 
@@ -255,6 +255,9 @@ function cobler(options){
 		for(var i in cobler.types) {
 			this.addTypeDisplay(cobler.types[i].prototype);
 		}
+	}
+	if($('#cb-form').length === 0) {
+		$(this.options.form).append(Berry.render('cobler_controls', options));
 	}
 
 
