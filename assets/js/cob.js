@@ -28,8 +28,6 @@ function Cobler(options) {
 	}
 
 	function collection(target, items, cob){
-		var active;
-		var myBerry;
 		if(!cob.options.disabled) {
 			target.addEventListener('click', instanceManager);
 			Sortable.create(target, {
@@ -68,8 +66,10 @@ function Cobler(options) {
 				deactivate();
 				var index = getNodeIndex(referenceNode);
 				addItem(items[index].toJSON(), index+1);
-			}else if(e.target.tagName === 'LI') {
-				activate(e.target);
+			}else if(classList.indexOf('edit-item') >= 0){
+				activate(referenceNode);
+			// }else if(e.target.tagName === 'LI') {
+			// 	activate(e.target);
 			}
 		}
 		function activate(targetEL) {
@@ -78,12 +78,28 @@ function Cobler(options) {
 			active = getNodeIndex(targetEL);
 			activeEl = targetEL;
 			cob.publish('activate');
-			myBerry = new Berry({renderer: 'tabs', actions: false, attributes: items[active].toJSON(), fields: items[active].fields}, $(cob.options.formTarget || document.getElementById('form'))).on('change', function(){
+
+			var formConfig = {
+				renderer: 'tabs', 
+				attributes: items[active].toJSON(), 
+				fields: items[active].fields,
+				autoDestroy: true,
+				legend: 'Edit '+ items[active].toJSON()['widgetType']
+			}
+			var events = 'save';
+			if(typeof cob.options.formTarget !== 'undefined'){
+				formConfig.actions = ['save','cancel'];
+				actions: false,
+				events = 'change';
+			}
+			myBerry = new Berry(formConfig, cob.options.formTarget).on(events, function(){
 				items[active].set(this.toJSON())
 				var temp = renderItem(items[active]);
 				temp.className += ' ' + cob.options.active;
 			 	var a = activeEl.parentNode.replaceChild(temp, activeEl);
 			 	activeEl = temp;
+			 	this.trigger('saved');
+			 	deactivate();
 			 	cob.publish('change')
 			});
 		}
@@ -100,6 +116,7 @@ function Cobler(options) {
 			});
 		}
 		function load(obj) {
+			deactivate();
 			reset(obj);
 			items = [];
 			for(var i in obj) {
