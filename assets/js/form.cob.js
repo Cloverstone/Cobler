@@ -144,36 +144,59 @@ Cobler.types.checkbox = function(owner) {
 
 
 
-Cobler.types.view = function(owner) {
+Cobler.types.rss = function(owner) {
 
-
+	// this.owner = owner;
+		debugger;
 	function render() {
 		item.container = 'span';
-		return templates['berry_checkbox'].render(toJSON(), templates);
+		var temp = toJSON()
+		if(typeof temp.loaded === 'undefined' && temp.count > 0 && temp.url){
+				$.ajax({
+				  url      : document.location.protocol + '//ajax.googleapis.com/ajax/services/feed/load?v=1.0&num='+temp.count+'&callback=?&q=' + encodeURIComponent(temp.url),
+				  dataType : 'json',
+				  success  : $.proxy(function (data) {
+				    if (data.responseData.feed && data.responseData.feed.entries) {
+				    	for(var i in data.responseData.feed.entries){
+								data.responseData.feed.entries[i].contentSnippet = data.responseData.feed.entries[i].contentSnippet.replace(/&lt;/,"<").replace(/&gt;/,">").replace(/&amp;/,"&");
+				    	}
+				    	var temp = toJSON();
+				    	temp.loaded = data.responseData.feed;
+				    	set(temp);
+				    	// debugger;
+				    	// render();
+				    	this.owner.reload(temp);
+				    }
+				  }, this)
+				});
+			}
+		return templates['widgets_rss'].render(temp, templates);
+
 	}
 	function toJSON(clean) {
 		if(!clean){
-			item.widgetType = 'view';
+			item.widgetType = 'rss';
 		}
-		item.type = 'checkbox';
+		// item.type = 'rss';
 		return item;
 	}
 	function set(newItem) {
-		item = newItem;
+		$.extend(item, newItem);
+		// item = newItem;
 	}
 	var item = {
-		widgetType: 'view'
+		widgetType: 'rss'
 	}
 	var fields = 
 			{
-				Label: {},
-				View: {type: 'select', key: 'title', reference: '_id', required: true},
-				Use: {type: 'radio', choices: ['model', 'collection'], value: 'model'},
+				'Title': {},
+				'Url': {value: 'http://www.binghamton.edu/photos/index.php/feed/'},
+				'Count': {value: 5, type: 'number'},
 			}
 	
 	return {
 		fields: fields,
-		render: render,
+		render: render.bind({owner:owner}),
 		toJSON: toJSON,
 		set: set,
 	}

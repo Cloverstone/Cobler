@@ -93,16 +93,32 @@ function Cobler(options) {
 				events = 'change';
 			}
 			myBerry = new Berry(formConfig, cob.options.formTarget).on(events, function(){
-				items[active].set(this.toJSON())
+				// items[active].set(this.toJSON())
+				// var temp = renderItem(items[active]);
+				// temp.className += ' ' + cob.options.active;
+			 // 	var a = activeEl.parentNode.replaceChild(temp, activeEl);
+			 // 	activeEl = temp;
+			 // 	this.trigger('saved');
+			 // 	deactivate();
+			 // 	cob.publish('change')
+			 	update(this.toJSON());
+			 	this.trigger('saved');
+			});
+		}
+		function update(data){
+				items[active].set(data)
 				var temp = renderItem(items[active]);
 				temp.className += ' ' + cob.options.active;
 			 	var a = activeEl.parentNode.replaceChild(temp, activeEl);
 			 	activeEl = temp;
-			 	this.trigger('saved');
 			 	deactivate();
 			 	cob.publish('change')
-			});
 		}
+		this.reload = function(data){
+			udate(data);
+
+		}.bind({udate:update})
+		
 		function deactivate() {
 			if(typeof myBerry !== 'undefined'){
 				myBerry.destroy();
@@ -145,7 +161,7 @@ function Cobler(options) {
 			return json;
 		}
 		function toHTML() {
-			var temp = "";
+			var temp = '';
 			for(var i in items){
 				temp += Cobler.types[items[i].widgetType].render(items[i]);
 			}

@@ -64,7 +64,7 @@
 									<li class="list-group-item" data-type="textbox">Text</li>
 									<li class="list-group-item" data-type="select">Select</li>
 									<li class="list-group-item" data-type="checkbox">Checkbox</li>
-									<li class="list-group-item" data-type="view">View</li>
+									<li class="list-group-item" data-type="rss">Rss</li>
 								</ul>			
 							<div id="form"></div>				
 							</div>
@@ -120,8 +120,25 @@
 			</div>
 		</script>
 
+		<script type='text/template' name="rss">
+<div class="panel panel-default">
+	<div class="panel-heading" style="position:relative">
+		<h3 class="panel-title"><i class="fa fa-list-ul"></i> {{title}}{{^title}}{{loaded.title}}{{^loaded.title}}{{{widgetType}}}{{/loaded.title}}{{/title}}  </h3>
+	</div>
+	<div class="panel-body collapsible" style="padding:0">
+		<div class="list-group" style="margin-bottom:0">		
+		{{#loaded.entries}}
+		  <div class="list-group-item"><a href="{{link}}" target="_blank" ><h5>{{title}}</h5></a><div style="max-width:100%">{{{contentSnippet}}}</div></div>
+		{{/loaded.entries}}
+		</div>
+	</div>
+</div>
+		</script>
+
+
 		<script type='text/javascript' >
 			templates['itemContainer'] = Hogan.compile(document.getElementsByName('itemContainer')[0].innerHTML)
+			templates['widgets_rss'] = Hogan.compile(document.getElementsByName('rss')[0].innerHTML)
 		</script>
 		<script type='text/javascript' >
 			$('body').keydown(function(event) {

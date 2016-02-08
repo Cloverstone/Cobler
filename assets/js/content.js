@@ -58,6 +58,7 @@ $('#cobler').on('click', function(e) {
       cb.collections[0].load(temp.fields);
     }else{
       // cb.load(JSON.parse(($.jStorage.get('form') || "{}")));
+      debugger;
 
       cb.collections[0].load(JSON.parse(($.jStorage.get('form') || "{}")));
     }
@@ -69,6 +70,7 @@ $('#cobler').on('click', function(e) {
 
 document.addEventListener('DOMContentLoaded', function(){
 
+  form = (urlParams['demo'] || 'example');
     $('#cobler').click();
 
   forms['builder'] = JSON.parse(($.jStorage.get('form') || "{}"));
