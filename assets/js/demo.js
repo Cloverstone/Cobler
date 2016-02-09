@@ -17,7 +17,7 @@ $('#cobler').on('click', function(e) {
     if(typeof cb === 'undefined'){
       // cb = new cobler({target: '#editor', types: ['form']});
 
-      cb = new Cobler({disabled: false, targets: [document.getElementById('editor')],items:[[]]})
+      cb = new Cobler({formTarget: $('#form'), targets: [document.getElementById('editor')], items: [[]]})
       list = document.getElementById('sortableList');
       cb.addSource(list);
       cb.on('activate', function(){

@@ -36,22 +36,22 @@ $('#cobler').on('click', function(e) {
 
     if(typeof forms[form] !== 'undefined'){
       var temp = $.extend(true, {}, forms[form]);
-      for(var i in temp.fields){
+      // for(var i in temp.fields){
 
-        temp.fields[i] = Berry.normalizeItem(Berry.processOpts(temp.fields[i]), i);
-        switch(temp.fields[i].type) {
-          case "select":
-          case "radio":
-            temp.fields[i].widgetType = 'select';
-            break;
-          case "checkbox":
-            temp.fields[i].widgetType = 'checkbox';
-            break;
-          default:
-            temp.fields[i].widgetType = 'textbox';
-        }
+      //   temp.fields[i] = Berry.normalizeItem(Berry.processOpts(temp.fields[i]), i);
+      //   switch(temp.fields[i].type) {
+      //     case "select":
+      //     case "radio":
+      //       temp.fields[i].widgetType = 'select';
+      //       break;
+      //     case "checkbox":
+      //       temp.fields[i].widgetType = 'checkbox';
+      //       break;
+      //     default:
+      //       temp.fields[i].widgetType = 'textbox';
+      //   }
 
-      }
+      // }
 
       
       list.className = list.className.replace('hidden', '');

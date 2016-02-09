@@ -61,10 +61,8 @@
 					  <div class="panel-body">
 							<div class="source view view_source" id="alt-sidebar">
 								<ul id="sortableList" class="list-group ">
-									<li class="list-group-item" data-type="textbox">Text</li>
-									<li class="list-group-item" data-type="select">Select</li>
-									<li class="list-group-item" data-type="checkbox">Checkbox</li>
 									<li class="list-group-item" data-type="rss">Rss</li>
+									<li class="list-group-item" data-type="content">Content</li>
 								</ul>			
 							<div id="form"></div>				
 							</div>
@@ -102,8 +100,9 @@
 		<script type="text/javascript" src="assets/js/bin/full.berry.min.js"></script>
 		
 		<script type='text/javascript' src='assets/js/cob.js'></script>
-		<script type='text/javascript' src='assets/js/form.cob.js'></script>		
-		<script type='text/javascript' src='//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js'></script>
+		<script type='text/javascript' src='assets/js/content.cob.js'></script>		
+		<script type='text/javascript' src='//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js'></script>		
+		<script type='text/javascript' src='//cdn.tinymce.com/4/tinymce.min.js'></script>
 
 
 
@@ -136,9 +135,22 @@
 		</script>
 
 
+		<script type='text/template' name="content">
+<div class="panel panel-default">
+	{{>widgets__header}}
+	<div class="collapsible panel-body">
+		<div>
+		{{{text}}}
+		</div>
+	</div>
+</div>
+</script>
+
+
 		<script type='text/javascript' >
 			templates['itemContainer'] = Hogan.compile(document.getElementsByName('itemContainer')[0].innerHTML)
 			templates['widgets_rss'] = Hogan.compile(document.getElementsByName('rss')[0].innerHTML)
+			templates['widgets_content'] = Hogan.compile(document.getElementsByName('content')[0].innerHTML)
 		</script>
 		<script type='text/javascript' >
 			$('body').keydown(function(event) {
