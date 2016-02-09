@@ -8,7 +8,7 @@ $('#cobler').on('click', function(e) {
     if(typeof cb === 'undefined'){
       // cb = new cobler({target: '#editor', types: ['form']});
 
-      cb = new Cobler({disabled: false, targets: [document.getElementById('editor')],items:[[]]})
+      cb = new Cobler({ disabled: false, targets: [document.getElementById('editor'),document.getElementById('editor2')],items:[[]]})
       list = document.getElementById('sortableList');
       cb.addSource(list);     
       list.addEventListener('click', function(e) {
@@ -54,13 +54,13 @@ $('#cobler').on('click', function(e) {
       // }
 
       
-      list.className = list.className.replace('hidden', '');
-      cb.collections[0].load(temp.fields);
+      // list.className = list.className.replace('hidden', '');
+      // cb.load(temp.fields);
     }else{
       // cb.load(JSON.parse(($.jStorage.get('form') || "{}")));
-      debugger;
+      // debugger;
 
-      cb.collections[0].load(JSON.parse(($.jStorage.get('form') || "{}")));
+      // cb.collections[0].load(JSON.parse(($.jStorage.get('form') || "{}")));
     }
 
 });

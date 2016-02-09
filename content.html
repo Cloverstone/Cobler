@@ -64,6 +64,7 @@
 									<li class="list-group-item" data-type="rss">Rss</li>
 									<li class="list-group-item" data-type="content">Content</li>
 								</ul>			
+							<div id="editor2" style="min-height:200px" class="widget_container"></div>
 							<div id="form"></div>				
 							</div>
 					  </div>
@@ -74,7 +75,7 @@
 					  <div class="panel-heading"><b>Form</b></div>
 					  <div class="panel-body">
 							<div class="target"></div>
-							<div id="editor" class="form-horizontal widget_container"></div>
+							<div id="editor" style="min-height:200px" class="widget_container"></div>
 				  	</div>
 					</div>
 				</div>
@@ -109,6 +110,7 @@
 		<script type='text/javascript' src='src/vendor/js/colorpicker.min.js'></script>
 		<script type='text/javascript' src='assets/js/bin/bootstrap.full.berry.js'></script>
 		<script type='text/javascript' src='assets/js/content.js'></script>
+		<script type='text/javascript' src='assets/js/widget_templates.js'></script>
 
 		<script type='text/template' name="itemContainer">
 			<div class="cobler-li-content"></div>
@@ -119,38 +121,13 @@
 			</div>
 		</script>
 
-		<script type='text/template' name="rss">
-<div class="panel panel-default">
-	<div class="panel-heading" style="position:relative">
-		<h3 class="panel-title"><i class="fa fa-list-ul"></i> {{title}}{{^title}}{{loaded.title}}{{^loaded.title}}{{{widgetType}}}{{/loaded.title}}{{/title}}  </h3>
-	</div>
-	<div class="panel-body collapsible" style="padding:0">
-		<div class="list-group" style="margin-bottom:0">		
-		{{#loaded.entries}}
-		  <div class="list-group-item"><a href="{{link}}" target="_blank" ><h5>{{title}}</h5></a><div style="max-width:100%">{{{contentSnippet}}}</div></div>
-		{{/loaded.entries}}
-		</div>
-	</div>
-</div>
-		</script>
-
-
-		<script type='text/template' name="content">
-<div class="panel panel-default">
-	{{>widgets__header}}
-	<div class="collapsible panel-body">
-		<div>
-		{{{text}}}
-		</div>
-	</div>
-</div>
-</script>
 
 
 		<script type='text/javascript' >
 			templates['itemContainer'] = Hogan.compile(document.getElementsByName('itemContainer')[0].innerHTML)
-			templates['widgets_rss'] = Hogan.compile(document.getElementsByName('rss')[0].innerHTML)
-			templates['widgets_content'] = Hogan.compile(document.getElementsByName('content')[0].innerHTML)
+
+
+
 		</script>
 		<script type='text/javascript' >
 			$('body').keydown(function(event) {

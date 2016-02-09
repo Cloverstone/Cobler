@@ -28,33 +28,42 @@ function Cobler(options) {
 	}
 
 	function collection(target, items, cob){
-		if(!cob.options.disabled) {
-			target.addEventListener('click', instanceManager);
-			sortable = Sortable.create(target, {
-				group: 'cb',
-				animation: 150,
-				onAdd: function (evt) {
-					var A = evt.item;
-					//handle if dragged over target and put back in original
-					if(A.parentNode === target) {
-						var newItem = Cobler.types[A.dataset.type]();
-					 	var a = A.parentNode.replaceChild(renderItem(newItem), A);
-						items.splice(evt.newIndex, 0 , newItem);
-					}
-				}, onEnd: function (evt) {
-					items.splice(getNodeIndex(evt.item), 0 , items.splice(evt.item.dataset.start, 1)[0]);
-					evt.item.removeAttribute('data-start');
-					cob.publish('change');
-				}, onStart: function (evt) {
-	        evt.item.dataset.start = getNodeIndex(evt.item);  // element index within parent
-	    	}
-			});
+		function init(){
+			if(!cob.options.disabled) {
+				target.addEventListener('click', instanceManager.bind(this));
+				sortable = Sortable.create(target, {
+					group: 'cb',
+					animation: 150,
+					onAdd: addOnDrop.bind(this), 
+					onEnd: function (evt) {
+						items.splice(getNodeIndex(evt.item), 0 , items.splice(evt.item.dataset.start, 1)[0]);
+						evt.item.removeAttribute('data-start');
+						cob.publish('change');
+					},
+					onRemove: function (/**Event*/evt) {
+        // same properties as onUpdate
+        debugger;
+			    },
+					onStart: function (evt) {
+		        evt.item.dataset.start = getNodeIndex(evt.item);  // element index within parent
+		    	}
+				});
+			}
 		}
-
 		load(items);
 		function reset(items) {
 			target.innerHTML = '';
 			items = items || [];
+		}
+		function addOnDrop(evt){
+			var A = evt.item;
+			//handle if dragged over target and put back in original
+			if(A.parentNode === target) {
+				var newItem = new Cobler.types[A.dataset.type](this);
+			 	var a = A.parentNode.replaceChild(renderItem(newItem), A);
+				items.splice(evt.newIndex, 0 , newItem);
+			 	activate(newItem);
+			}
 		}
 		function instanceManager(e) {
 			var referenceNode = e.target.parentElement.parentElement;
@@ -66,63 +75,36 @@ function Cobler(options) {
 			}else if(classList.indexOf('duplicate-item') >= 0){
 				deactivate();
 				var index = getNodeIndex(referenceNode);
-				addItem(items[index].toJSON(), index+1);
+				addItem.call(this, items[index].get(), index+1);
 			}else if(classList.indexOf('edit-item') >= 0){
 				activate(referenceNode);
 			}else if(e.target.tagName === 'LI') {
+				deactivate();
 				activate(e.target);
 			}
 		}
 		function activate(targetEL) {
-			// if(typeof myBerry !== 'undefined'){
-			// 	myBerry.trigger('cancel');
-			// }
-			deactivate();
 			targetEL.className += ' ' + cob.options.active;
 			active = getNodeIndex(targetEL);
-			activeEl = targetEL;
 			cob.publish('activate');
-			var formConfig = {
-				renderer: 'tabs', 
-				attributes: items[active].toJSON(), 
-				fields: items[active].fields,
-				autoDestroy: true,
-				legend: 'Edit '+ items[active].toJSON()['widgetType']
-			}
-			var events = 'save';
-			if(typeof cob.options.formTarget !== 'undefined'){
-				formConfig.actions = false;
-				events = 'change';
-			}
-
-			myBerry = new Berry(formConfig, cob.options.formTarget || $(activeEl));
-			myBerry.on(events, function(){
-			 	update(this.toJSON());
-			 	this.trigger('saved');
-			});
-			myBerry.on('cancel',function(){
-				var temp = renderItem(items[active]);
-				temp.className += ' ' + cob.options.active;
-			 	var a = activeEl.parentNode.replaceChild(temp, activeEl);
-			 	activeEl = temp;
-			})
+			items[active].edit();
 		}
-		function update(data){
-			items[active].set(data)
-			var temp = renderItem(items[active]);
+		function update(data, item) {
+			var item = item || items[active];
+			item.set(data);
+			var temp = renderItem(item);
 			temp.className += ' ' + cob.options.active;
-		 	var a = activeEl.parentNode.replaceChild(temp, activeEl);
-		 	activeEl = temp;
+			var modEL = elementOf(item);
+		 	var a = modEL.parentNode.replaceChild(temp, modEL);
 		 	cob.publish('change')
 		}
 		
 		function deactivate() {
-			if(typeof myBerry !== 'undefined'){
-				myBerry.destroy();
-				myBerry = undefined;
-			}
+			// if(typeof myBerry !== 'undefined'){
+			// 	myBerry.destroy();
+			// 	myBerry = undefined;
+			// }
 			active = null;
-			activeEl = null;
 			var elems = target.getElementsByClassName(cob.options.active);
 			[].forEach.call(elems, function(el) {
 			    el.className = el.className.replace(cob.options.active, '');
@@ -133,7 +115,7 @@ function Cobler(options) {
 			reset(obj);
 			items = [];
 			for(var i in obj) {
-				addItem(obj[i], false, true);
+				addItem.call(this, obj[i], false, true);
 			}
 		}
 		function addItem(widgetType, index, silent) {
@@ -172,6 +154,12 @@ function Cobler(options) {
 			if(typeof sortable !== 'undefined') { sortable.destroy(); }
 			target.removeEventListener('click', instanceManager);
 		}
+		function indexOf(item){
+			return items.indexOf(item);
+		}
+		function elementOf(item){
+				return target.getElementsByTagName('LI')[items.indexOf(item)];
+			}
 		return {
 			addItem: addItem,
 			toJSON: toJSON,
@@ -180,7 +168,11 @@ function Cobler(options) {
 			clear: reset,
 			load: load,
 			update: update.bind(this),
-			destroy: destroy
+			destroy: destroy,
+			owner: cob,
+			init: init,
+			indexOf: indexOf,
+			elementOf: elementOf
 		}
 	}
 
@@ -206,7 +198,9 @@ function Cobler(options) {
 	  return index;
 	}
 	function addCollection(target, item){
-		collections.push(new collection(target, item, this));
+		var newCol = new collection(target, item, this);
+		newCol.init();
+		collections.push(newCol);
 	}
 	function addSource(element){
 		Sortable.create(element, {group: {name: 'cb', pull: 'clone', put: false}, sort: false });
@@ -237,3 +231,30 @@ function Cobler(options) {
 }
 
 Cobler.types = {};
+
+
+berryEditor = function(container){
+	return function(){
+		var formConfig = {
+			renderer: 'tabs', 
+			attributes: this.get(), 
+			fields: this.fields,
+			autoDestroy: true,
+			legend: 'Edit '+ this.get()['widgetType']
+		}
+		var opts = container.owner.options;
+		var events = 'save';
+		if(typeof opts.formTarget !== 'undefined' && opts.formTarget.length){
+			formConfig.actions = false;
+			events = 'change';
+		}	
+		var myBerry = new Berry(formConfig, opts.formTarget ||  $(container.elementOf(this)));
+		myBerry.on(events, function(){
+		 	container.update(myBerry.toJSON(), this);
+		 	myBerry.trigger('saved');
+		}, this);
+		myBerry.on('cancel',function(){
+		 	container.update(this.get(), this)
+		}, this)
+	}
+}

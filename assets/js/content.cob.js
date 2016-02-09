@@ -1,18 +1,18 @@
-Cobler.types.content = function(owner){
+Cobler.types.content = function(container){
 	function render() {
-		return templates['widgets_content'].render(toJSON(), templates);
+		return templates['widgets_content'].render(get(), templates);
 	}
-	function toJSON(clean) {
-		if(!clean){
-			item.widgetType = 'content';
-		}
+	function get() {
+		item.widgetType = 'content';
 		return item;
+	}
+	function toJSON(){
+		return get();
 	}
 	function set(newItem) {
 		$.extend(item, newItem);
 	}
 	var item = {
-		// widgetType: 'content',
 		title: 'This is the title',
 		text: 'Here is some text'
 	}
@@ -22,46 +22,52 @@ Cobler.types.content = function(owner){
 	}
 	return {
 		fields: fields,
-		render: render.bind({owner: owner}),
+		render: render,
 		toJSON: toJSON,
+		edit: berryEditor.call(this, container),
+		get: get,
 		set: set,
 	}
 }
 
-Cobler.types.rss = function(owner) {
-	function render() {
-		var temp = toJSON()
+Cobler.types.rss = function(container) {
+
+	function render() {	
+		var temp = get()
 		if(typeof temp.loaded === 'undefined' && temp.count > 0 && temp.url){
 				$.ajax({
 				  url      : document.location.protocol + '//ajax.googleapis.com/ajax/services/feed/load?v=1.0&num='+temp.count+'&callback=?&q=' + encodeURIComponent(temp.url),
 				  dataType : 'json',
 				  success  : $.proxy(function (data) {
-				    if (data.responseData.feed && data.responseData.feed.entries) {
-				    	for(var i in data.responseData.feed.entries){
-								data.responseData.feed.entries[i].contentSnippet = data.responseData.feed.entries[i].contentSnippet.replace(/&lt;/,"<").replace(/&gt;/,">").replace(/&amp;/,"&");
+				  	var feed = data.responseData.feed
+				    if (feed && feed.entries) {
+				    	for(var i in feed.entries){
+								feed.entries[i].contentSnippet = feed.entries[i].contentSnippet.replace(/&lt;/,"<").replace(/&gt;/,">").replace(/&amp;/,"&");
 				    	}
-				    	var temp = toJSON();
-				    	temp.loaded = data.responseData.feed;
-				    	this.owner.update(temp);
+				    	var temp = get();
+				    	temp.loaded = feed;
+				    	container.update(temp, this);
 				    }
 				  }, this)
 				});
 			}
-		
 		return templates['widgets_rss'].render(temp, templates);
 	}
-	function toJSON(clean) {
-		if(!clean){
-			item.widgetType = 'rss';
-		}
+	function get() {
+		item.widgetType = 'rss';
 		return item;
 	}
+	function toJSON(){
+		var temp = get();
+		delete temp.loaded;
+		return temp;
+	}
 	function set(newItem) {
-		// $.extend(item, newItem);
-
 		item = newItem;
 	}
-	var item = {};
+	var item = {
+
+	};
 	var fields = {
 		Title: {},
 		Url: {value: 'http://www.binghamton.edu/photos/index.php/feed/'},
@@ -69,8 +75,10 @@ Cobler.types.rss = function(owner) {
 	}
 	return {
 		fields: fields,
-		render: render.bind({owner: owner}),
+		render: render,
 		toJSON: toJSON,
-		set: set,
+		edit: berryEditor.call(this, container),
+		get: get,
+		set: set
 	}
 }
