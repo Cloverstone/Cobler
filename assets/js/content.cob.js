@@ -31,7 +31,7 @@ Cobler.types.content = function(container){
 }
 
 Cobler.types.rss = function(container) {
-
+	// var container = container;
 	function render() {	
 		var temp = get()
 		if(typeof temp.loaded === 'undefined' && temp.count > 0 && temp.url){
@@ -44,7 +44,6 @@ Cobler.types.rss = function(container) {
 				    	for(var i in feed.entries){
 								feed.entries[i].contentSnippet = feed.entries[i].contentSnippet.replace(/&lt;/,"<").replace(/&gt;/,">").replace(/&amp;/,"&");
 				    	}
-				    	debugger;
 				    	var temp = get();
 				    	temp.loaded = feed;
 				    	container.update(temp, this);

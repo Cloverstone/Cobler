@@ -29,14 +29,14 @@ function Cobler(options) {
 	}
 
 	function collection(target, items, cob){
-		function init(){
+		var sortable;
+		function init() {
 			if(!cob.options.disabled) {
 				target.addEventListener('click', instanceManager.bind(this));
 				target.className += ' cobler_container';
 				sortable = Sortable.create(target, {
 					group: 'cb',
 					animation: 150,
-					ghostClass: "sortable-ghost",
 					onSort: function (/**Event*/evt) {
 						if(cob.options.remove) {
 								cob.options.removed = items.splice(parseInt(evt.item.dataset.start, 10), 1)[0];
@@ -56,8 +56,8 @@ function Cobler(options) {
 		    	}
 				});
 			}
+			loadItems.call(this, items);
 		}
-		load(items);
 		function reset(items) {
 			target.innerHTML = '';
 			items = items || [];
@@ -131,7 +131,7 @@ function Cobler(options) {
 			    el.className = el.className.replace(cob.options.active, '');
 			});
 		}
-		function load(obj) {
+		function loadItems(obj) {
 			deactivate();
 			reset(obj);
 			items = [];
@@ -144,7 +144,6 @@ function Cobler(options) {
 				return false;
 			}
 			index = index || items.length;
-
 			var newItem = new Cobler.types[widgetType.widgetType || widgetType](this)
 			if(typeof widgetType !== 'string'){
 				newItem.set(widgetType);
@@ -188,7 +187,7 @@ function Cobler(options) {
 			toHTML: toHTML,
 			deactivate: deactivate,
 			clear: reset,
-			load: load,
+			load: loadItems,
 			update: update.bind(this),
 			destroy: destroy,
 			owner: cob,
