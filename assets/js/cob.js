@@ -24,7 +24,7 @@ function Cobler(options) {
 
   //initialize collections array and then create a collection for each target
 	var collections = [];
-	for(var i in options.targets){
+	for(var i=0; i<options.targets.length; i++){
 		addCollection.call(this, options.targets[i], options.items[i]);
 	}
 
@@ -32,20 +32,22 @@ function Cobler(options) {
 		function init(){
 			if(!cob.options.disabled) {
 				target.addEventListener('click', instanceManager.bind(this));
+				target.className += ' cobler_container';
 				sortable = Sortable.create(target, {
 					group: 'cb',
 					animation: 150,
+					ghostClass: "sortable-ghost",
 					onSort: function (/**Event*/evt) {
 						if(cob.options.remove) {
-								cob.options.removed = items.splice(evt.item.dataset.start, 1)[0];
+								cob.options.removed = items.splice(parseInt(evt.item.dataset.start, 10), 1)[0];
 								cob.options.remove = false;
-						}else if(evt.from !== evt.to){
+						}else if(evt.from !== evt.to && typeof evt.item.dataset.type === 'undefined'){
 							cob.options.remove = true;
 						}						
 			    },
 					onAdd: addOnDrop.bind(this), 
 					onUpdate: function (evt) {
-						items.splice(getNodeIndex(evt.item), 0 , items.splice(evt.item.dataset.start, 1)[0]);
+						items.splice(getNodeIndex(evt.item), 0 , items.splice(parseInt(evt.item.dataset.start, 10), 1)[0]);
 						evt.item.removeAttribute('data-start');
 						cob.publish('change');
 					},
@@ -71,11 +73,14 @@ function Cobler(options) {
 					var temp = cob.options.removed.get();
 					newItem = new Cobler.types[temp.widgetType](this);
 					newItem.set(temp);
+					evt.newIndex = getNodeIndex(evt.item);
 				}
-			 	var a = A.parentNode.replaceChild(renderItem(newItem), A);
+				var renderedItem = renderItem(newItem);
+			 	var a = A.parentNode.replaceChild(renderedItem, A);
 				items.splice(evt.newIndex, 0 , newItem);
 				if(typeof A.dataset.type !== 'undefined') {
-			 		activate(newItem);
+					// debugger;
+			 		activate(renderedItem);
 			 	}else{
 			 		cob.options.removed = false;
 			 	}
@@ -94,7 +99,7 @@ function Cobler(options) {
 				addItem.call(this, items[index].get(), index+1);
 			}else if(classList.indexOf('edit-item') >= 0){
 				activate(referenceNode);
-			}else if(e.target.tagName === 'LI') {
+			}else if(e.target.tagName === 'LI' && target.className.indexOf('cobler_select') != -1) {
 				deactivate();
 				activate(e.target);
 			}

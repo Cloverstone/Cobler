@@ -35,14 +35,9 @@
 					<ul class="nav navbar-nav">
 						<li class="dropdown ">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true"><i class="fa fa-flask"></i> Demo <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-	              <li><a href="?demo=example" id="example">Example</a></li>
-								<li><a href="?demo=basic" id="basic">Basic</a></li>
-								<li><a href="?demo=conditional" id="conditional">Conditional</a></li>
-								<li><a href="?demo=duplicate" id="duplicate">Duplicate</a></li>
-								<li><a href="?demo=nonfields" id="nonfields">Non Fields</a></li>
-								<li><a href="?demo=auto" id="auto">Auto Types</a></li>
-								<li><a href="?demo=builder" id="builder">Builder</a></li>
+              <ul id="sortableList" class="dropdown-menu">
+									<li class="list-group-item" data-type="rss"><a href="javascript:void(0);">Rss</a></li>
+									<li class="list-group-item" data-type="content"><a href="javascript:void(0);">Content</a></li>
               </ul>
             </li>
 					</ul>
@@ -51,34 +46,34 @@
 		</div><!-- /.navbar -->
 		<div class="container" style="width:100%">
 			<div class="row">
-				<div class="col-md-6 col-sm-4 hidden-xs">
+				<div class="col-md-4 idden-xs">
 					<div class="panel panel-default">
-					  <div class="panel-heading">
-							<div class="btn-group" role="group" aria-label="...">
-							  <button type="button" id="cobler" class="btn btn-default">Editor</button>
-							</div>
-					  </div>
+					  <div class="panel-heading"><b>Section 0</b></div>
 					  <div class="panel-body">
 							<div class="source view view_source" id="alt-sidebar">
-								<ul id="sortableList" class="list-group ">
-									<li class="list-group-item" data-type="rss">Rss</li>
-									<li class="list-group-item" data-type="content">Content</li>
-								</ul>			
-							<div id="editor2" style="min-height:200px" class="widget_container"></div>
-							<div id="form"></div>				
+							<div style="min-height:200px" class="widget_container"></div>		
 							</div>
 					  </div>
-					</div>
+					</div>				
+					
 				</div>
-				<div class="col-md-6 col-sm-8 col-xs-12">
-					<div class="panel panel-success">
-					  <div class="panel-heading"><b>Form</b></div>
-					  <div class="panel-body">
-							<div class="target"></div>
-							<div id="editor" style="min-height:200px" class="widget_container"></div>
-				  	</div>
+				<div class="col-md-4 col-xs-12">
+						<div class="panel panel-success">
+						  <div class="panel-heading"><b>Section 1</b></div>
+						  <div class="panel-body">
+								<div style="min-height:200px" class="widget_container"></div>
+					  	</div>
+						</div>
+					</div>				
+					<div class="col-md-4 col-xs-12">
+						<div class="panel panel-warning">
+						  <div class="panel-heading"><b>Section 2</b></div>
+						  <div class="panel-body">
+								<div class="target"></div>
+								<div id="neweditor" style="min-height:200px" class="widget_container"></div>
+					  	</div>
+						</div>
 					</div>
-				</div>
 			</div>
 		</div>
 
