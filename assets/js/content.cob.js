@@ -44,6 +44,7 @@ Cobler.types.rss = function(container) {
 				    	for(var i in feed.entries){
 								feed.entries[i].contentSnippet = feed.entries[i].contentSnippet.replace(/&lt;/,"<").replace(/&gt;/,">").replace(/&amp;/,"&");
 				    	}
+				    	debugger;
 				    	var temp = get();
 				    	temp.loaded = feed;
 				    	container.update(temp, this);

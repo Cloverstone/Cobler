@@ -6,9 +6,10 @@
 
 function Cobler(options) {
   var topics = {};
-
 	this.options = options
 	this.options.active = this.options.active || 'widget_active';
+
+  options.removed = false;
 	//simple event bus with the topics object bound
   this.subscribe = function(topic, listener) {
     if(!topics[topic]) topics[topic] = [];
@@ -34,16 +35,20 @@ function Cobler(options) {
 				sortable = Sortable.create(target, {
 					group: 'cb',
 					animation: 150,
+					onSort: function (/**Event*/evt) {
+						if(cob.options.remove) {
+								cob.options.removed = items.splice(evt.item.dataset.start, 1)[0];
+								cob.options.remove = false;
+						}else if(evt.from !== evt.to){
+							cob.options.remove = true;
+						}						
+			    },
 					onAdd: addOnDrop.bind(this), 
-					onEnd: function (evt) {
+					onUpdate: function (evt) {
 						items.splice(getNodeIndex(evt.item), 0 , items.splice(evt.item.dataset.start, 1)[0]);
 						evt.item.removeAttribute('data-start');
 						cob.publish('change');
 					},
-					onRemove: function (/**Event*/evt) {
-        // same properties as onUpdate
-        debugger;
-			    },
 					onStart: function (evt) {
 		        evt.item.dataset.start = getNodeIndex(evt.item);  // element index within parent
 		    	}
@@ -58,11 +63,22 @@ function Cobler(options) {
 		function addOnDrop(evt){
 			var A = evt.item;
 			//handle if dragged over target and put back in original
-			if(A.parentNode === target) {
-				var newItem = new Cobler.types[A.dataset.type](this);
+			if(A.parentNode === target){
+				var newItem;
+			 	if(typeof A.dataset.type !== 'undefined') {
+					newItem = new Cobler.types[A.dataset.type](this);
+				}else{
+					var temp = cob.options.removed.get();
+					newItem = new Cobler.types[temp.widgetType](this);
+					newItem.set(temp);
+				}
 			 	var a = A.parentNode.replaceChild(renderItem(newItem), A);
 				items.splice(evt.newIndex, 0 , newItem);
-			 	activate(newItem);
+				if(typeof A.dataset.type !== 'undefined') {
+			 		activate(newItem);
+			 	}else{
+			 		cob.options.removed = false;
+			 	}
 			}
 		}
 		function instanceManager(e) {
@@ -123,6 +139,7 @@ function Cobler(options) {
 				return false;
 			}
 			index = index || items.length;
+
 			var newItem = new Cobler.types[widgetType.widgetType || widgetType](this)
 			if(typeof widgetType !== 'string'){
 				newItem.set(widgetType);
