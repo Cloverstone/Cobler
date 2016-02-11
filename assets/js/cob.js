@@ -179,7 +179,7 @@ function Cobler(options) {
 			return items.indexOf(item);
 		}
 		function elementOf(item){
-				return target.getElementsByTagName('LI')[items.indexOf(item)];
+				return target.children[items.indexOf(item)];
 			}
 		return {
 			addItem: addItem,
