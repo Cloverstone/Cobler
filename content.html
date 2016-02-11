@@ -32,10 +32,15 @@
 					</a>
 				</div>
 				<div class="collapse navbar-collapse">
-					<ul class="nav navbar-nav">
+					<ul class="nav navbar-nav">              		
+						<li id="addFieldset"><a href="javascript:void(0);">Fieldset</a></li>
+
 						<li class="dropdown ">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true"><i class="fa fa-flask"></i> Demo <span class="caret"></span></a>
               <ul id="sortableList" class="dropdown-menu">
+              		<li class="list-group-item" data-type="textbox"><a href="javascript:void(0);">Text</a></li>
+									<li class="list-group-item" data-type="select"><a href="javascript:void(0);">Select</a></li>
+									<li class="list-group-item" data-type="checkbox"><a href="javascript:void(0);">Checkbox</a></li>
 									<li class="list-group-item" data-type="rss"><a href="javascript:void(0);">Rss</a></li>
 									<li class="list-group-item" data-type="content"><a href="javascript:void(0);">Content</a></li>
               </ul>
@@ -44,36 +49,34 @@
 				</div><!-- /.nav-collapse -->
 			</div><!-- /.container -->
 		</div><!-- /.navbar -->
-		<div class="container" style="width:100%">
+		<div class="container col-md-6" style="width:100%">
 			<div class="row">
-				<div class="col-md-4 idden-xs">
+<!-- 				<div class="col-md-12 col-xs-12" data-id="first">
 					<div class="panel panel-default">
-					  <div class="panel-heading"><b>Section 0</b></div>
+					  <div class="panel-heading"><b>Fieldset 0</b></div>
 					  <div class="panel-body">
-							<div class="source view view_source" id="alt-sidebar">
-							<div style="min-height:200px" class="widget_container"></div>		
-							</div>
+							<div style="min-height:200px" class="widget_container" data-id="first"></div>	
 					  </div>
 					</div>				
 					
 				</div>
-				<div class="col-md-4 col-xs-12">
+				<div class="col-md-12 col-xs-12" data-id="second">
 						<div class="panel panel-success">
-						  <div class="panel-heading"><b>Section 1</b></div>
+						  <div class="panel-heading"><b>Fieldset 1</b></div>
 						  <div class="panel-body">
-								<div style="min-height:200px" class="widget_container"></div>
+								<div style="min-height:200px" class="widget_container" data-id="second"></div>
 					  	</div>
 						</div>
 					</div>				
-					<div class="col-md-4 col-xs-12">
+					<div class="col-md-12 col-xs-12" data-id="third">
 						<div class="panel panel-warning">
-						  <div class="panel-heading"><b>Section 2</b></div>
+						  <div class="panel-heading"><b>Fieldset 2</b></div>
 						  <div class="panel-body">
 								<div class="target"></div>
-								<div id="neweditor" style="min-height:200px" class="widget_container"></div>
+								<div id="neweditor" style="min-height:200px" class="widget_container" data-id="third"></div>
 					  	</div>
 						</div>
-					</div>
+					</div> -->
 			</div>
 		</div>
 
@@ -97,6 +100,7 @@
 		
 		<script type='text/javascript' src='assets/js/cob.js'></script>
 		<script type='text/javascript' src='assets/js/content.cob.js'></script>		
+		<script type='text/javascript' src='assets/js/form.cob.js'></script>		
 		<script type='text/javascript' src='//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js'></script>		
 		<script type='text/javascript' src='//cdn.tinymce.com/4/tinymce.min.js'></script>
 
@@ -116,10 +120,23 @@
 			</div>
 		</script>
 
+		<script type='text/template' name="berry_fieldset">
+			<div class="col-md-12 col-xs-12 fieldset" data-id="{{name}}">
+				<div class="panel panel-warning">
+				  <div class="panel-heading"><b>{{legend}}</b></div>
+				  <div class="panel-body">
+						<div class="target"></div>
+						<div style="min-height:200px" class="widget_container" data-id="{{name}}"></div>
+			  	</div>
+				</div>
+			</div>
+		</script>
+
 
 
 		<script type='text/javascript' >
 			templates['itemContainer'] = Hogan.compile(document.getElementsByName('itemContainer')[0].innerHTML)
+			templates['berry_fieldset'] = Hogan.compile(document.getElementsByName('berry_fieldset')[0].innerHTML)
 
 
 

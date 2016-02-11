@@ -35,7 +35,8 @@ function Cobler(options) {
 				target.addEventListener('click', instanceManager.bind(this));
 				target.className += ' cobler_container';
 				sortable = Sortable.create(target, {
-					group: 'cb',
+					forceFallback: !!cob.options.fallback,
+					group: cob.options.group || 'cb',
 					animation: 150,
 					onSort: function (/**Event*/evt) {
 						if(cob.options.remove) {
@@ -47,9 +48,10 @@ function Cobler(options) {
 			    },
 					onAdd: addOnDrop.bind(this), 
 					onUpdate: function (evt) {
-						items.splice(getNodeIndex(evt.item), 0 , items.splice(parseInt(evt.item.dataset.start, 10), 1)[0]);
+						var item = items.splice(parseInt(evt.item.dataset.start, 10), 1)[0];
+						items.splice(getNodeIndex(evt.item), 0 , item);
 						evt.item.removeAttribute('data-start');
-						cob.publish('change');
+						cob.publish('change', item);
 					},
 					onStart: function (evt) {
 		        evt.item.dataset.start = getNodeIndex(evt.item);  // element index within parent
@@ -90,9 +92,9 @@ function Cobler(options) {
 			var referenceNode = e.target.parentElement.parentElement;
 			var classList = e.target.className.split(' ');
 			if(classList.indexOf('remove-item') >= 0){
-				items.splice(getNodeIndex(referenceNode), 1);
+				var olditem = items.splice(getNodeIndex(referenceNode), 1);
 				target.removeChild(referenceNode);
-			 	cob.publish('change');
+			 	cob.publish('change', olditem);
 			}else if(classList.indexOf('duplicate-item') >= 0){
 				deactivate();
 				var index = getNodeIndex(referenceNode);
@@ -107,8 +109,9 @@ function Cobler(options) {
 		function activate(targetEL) {
 			targetEL.className += ' ' + cob.options.active;
 			active = getNodeIndex(targetEL);
-			cob.publish('activate');
+			cob.publish('activate', items[active]);
 			items[active].edit();
+			cob.publish('activated', items[active]);
 		}
 		function update(data, item) {
 			var item = item || items[active];
@@ -117,7 +120,7 @@ function Cobler(options) {
 			temp.className += ' ' + cob.options.active;
 			var modEL = elementOf(item);
 		 	var a = modEL.parentNode.replaceChild(temp, modEL);
-		 	cob.publish('change')
+		 	cob.publish('change', item);
 		}
 		
 		function deactivate() {
@@ -140,7 +143,7 @@ function Cobler(options) {
 			}
 		}
 		function addItem(widgetType, index, silent) {
-			if(typeof Cobler.types[widgetType.widgetType || widgetType] === 'undefined'){
+			if(typeof Cobler.types[widgetType.widgetType || widgetType] === 'undefined') {
 				return false;
 			}
 			index = index || items.length;
@@ -153,14 +156,15 @@ function Cobler(options) {
 			target.insertBefore(renderedItem, target.getElementsByTagName('LI')[index]);
 			if(!silent){
 				activate(renderedItem);
-				cob.publish('change')
+				cob.publish('change', newItem)
 			}
 		}
-		function toJSON() {
+		function toJSON(obj) {
 			var json = [];
 			for(var i in items){
 				json.push(items[i].toJSON());
 			}
+			if(obj)return {target: target.dataset.id, items: json};
 			return json;
 		}
 		function toHTML() {
@@ -219,27 +223,31 @@ function Cobler(options) {
 	  return index;
 	}
 	function addCollection(target, item){
+		// debugger;
 		var newCol = new collection(target, item, this);
 		newCol.init();
 		collections.push(newCol);
 	}
 	function addSource(element){
-		Sortable.create(element, {group: {name: 'cb', pull: 'clone', put: false}, sort: false });
+		Sortable.create(element, {
+			group: {name: 'cb', pull: 'clone', put: false}, 
+			sort: false 
+		});
 	}
 	function applyToEach(func){
-		return function(){
+		return function(opts){
 			var temp = [];
 			for(var i in collections) {
-				temp.push(collections[i][func]());
+				temp.push(collections[i][func].call(null, opts));
 			}
-			this.publish(func);
+			this.publish(func, temp);
 			return temp;
 		}.bind(this)
 	}
 
 	return {
 		collections: collections,
-		addCollection: addCollection,
+		addCollection: addCollection.bind(this),
 		addSource: addSource,
 		toJSON: applyToEach.call(this, 'toJSON'),
 		toHTML: applyToEach.call(this, 'toHTML'),

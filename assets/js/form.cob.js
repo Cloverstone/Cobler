@@ -148,3 +148,44 @@ Cobler.types.checkbox = function(container) {
 		set: set,
 	}
 }
+
+Cobler.types.fieldset = function(container) {
+	function render() {
+		var temp = get();
+		temp.item = {legend : temp.legend};
+		return templates['berry_base_fieldset'].render(temp, templates);
+	}
+	function get() {
+		item.widgetType = 'fieldset';
+		item.isEnabled = true;
+
+		item.type = 'fieldset';
+		return item;
+	}
+	function toJSON() {
+		return get();
+	}
+	function set(newItem) {
+		item = newItem;
+	}
+	var item = {
+		widgetType: 'fieldset',
+		type: 'fieldset',
+		legend: 'Label',
+		name: 'f1',
+		duplicate: false
+	}
+	var fields = [
+		{type: 'text', required: true, label: 'Fieldset Legend', name: 'legend'},
+		{type: 'text', required: true, label: 'Name', name: 'name'},
+		{type: 'checkbox', label: 'Duplicate', name: 'duplicate'},
+	]
+	return {
+		fields: fields,
+		render: render,
+		toJSON: toJSON,
+		edit: berryEditor.call(this, container),
+		get: get,
+		set: set,
+	}
+}
