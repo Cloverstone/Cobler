@@ -1,4 +1,4 @@
-Cobler.types.content = function(container){
+Cobler.types.Content = function(container){
 	function render() {
 		return templates['widgets_content'].render(get(), templates);
 	}

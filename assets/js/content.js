@@ -1,6 +1,6 @@
-//cb = new Cobler({ disabled: false, targets: [document.getElementById('editor'),document.getElementById('editor2')],items:[[]]})
 
-cb = new Cobler({ disabled: false, targets: document.getElementsByClassName('widget_container'), items:[[]]})
+var data = JSON.parse('[[{"title":"This is the title","text":"<p>Here is some text</p>","widgetType":"content"}],[],[]]');
+cb = new Cobler({ disabled: false, targets: document.getElementsByClassName('widget_container'), items:data})
 
 list = document.getElementById('sortableList');
 cb.addSource(list);

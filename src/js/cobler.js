@@ -64,6 +64,7 @@ function Cobler(options) {
 				items.splice(getNodeIndex(referenceNode), 1);
 				target.removeChild(referenceNode);
 			 	cob.publish('change');
+			 	cob.publish('remove');
 			}else if(classList.indexOf('duplicate-item') >= 0){
 				deactivate();
 				var index = getNodeIndex(referenceNode);
