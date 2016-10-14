@@ -80,8 +80,11 @@ function Cobler(options) {
 				var renderedItem = renderItem(newItem);
 			 	var a = A.parentNode.replaceChild(renderedItem, A);
 				items.splice(evt.newIndex, 0 , newItem);
+				if(typeof newItem.initialize !== 'undefined'){
+					newItem.initialize(renderedItem)
+				}
+
 				if(typeof A.dataset.type !== 'undefined') {
-					// debugger;
 			 		activate(renderedItem);
 			 	}else{
 			 		cob.options.removed = false;
@@ -105,6 +108,8 @@ function Cobler(options) {
 			}else if(e.target.tagName === 'LI' && target.className.indexOf('cobler_select') != -1) {
 				deactivate();
 				activate(e.target);
+			}else if(typeof e.currentTarget.dataset.event !== 'undefined'){
+				cob.publish(e.currentTarget.dataset.event, referenceNode)
 			}
 		}
 		function activate(targetEL) {
@@ -121,6 +126,9 @@ function Cobler(options) {
 			temp.className += ' ' + cob.options.active;
 			var modEL = elementOf(item);
 		 	var a = modEL.parentNode.replaceChild(temp, modEL);
+		 	if(typeof item.initialize !== 'undefined'){
+				item.initialize(temp)
+			}
 		 	cob.publish('change', item);
 		}
 		
@@ -154,7 +162,10 @@ function Cobler(options) {
 			}
 			items.splice(index, 0, newItem);
 			var renderedItem = renderItem(newItem);
-			target.insertBefore(renderedItem, target.getElementsByTagName('LI')[index]);
+			target.insertBefore(renderedItem, target.querySelectorAll(':scope > LI')[index]);
+			if(typeof newItem.initialize !== 'undefined'){
+				newItem.initialize(renderedItem)
+			}
 			if(!silent){
 				activate(renderedItem);
 				cob.publish('change', newItem)
@@ -224,7 +235,6 @@ function Cobler(options) {
 	  return index;
 	}
 	function addCollection(target, item){
-		// debugger;
 		var newCol = new collection(target, item, this);
 		newCol.init();
 		collections.push(newCol);
@@ -281,10 +291,13 @@ berryEditor = function(container){
 		var myBerry = new Berry(formConfig, opts.formTarget ||  $(container.elementOf(this)));
 		myBerry.on(events, function(){
 		 	container.update(myBerry.toJSON(), this);
+		 	container.deactivate();
 		 	myBerry.trigger('saved');
 		}, this);
 		myBerry.on('cancel',function(){
 		 	container.update(this.get(), this)
+		 	container.deactivate();
 		}, this)
+		return myBerry;
 	}
 }
