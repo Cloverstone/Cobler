@@ -8,6 +8,8 @@ function Cobler(options) {
   var topics = {};
 	this.options = options
 	this.options.active = this.options.active || 'widget_active';
+	this.options.itemContainer = this.options.itemContainer || 'itemContainer';
+	this.options.itemTarget = this.options.itemTarget || 'cobler-li-content';
 
   options.removed = false;
 	//simple event bus with the topics object bound
@@ -31,13 +33,14 @@ function Cobler(options) {
 	function collection(target, items, cob){
 		var sortable;
 		function init() {
+			target.addEventListener('click', eventManager.bind(this));
 			if(!cob.options.disabled) {
 				target.addEventListener('click', instanceManager.bind(this));
 				target.className += ' cobler_container';
 				sortable = Sortable.create(target, {
 					forceFallback: !!cob.options.fallback,
 					group: cob.options.group || 'cb',
-					animation: 150,
+					animation: 50,
 					onSort: function (/**Event*/evt) {
 						if(cob.options.remove) {
 								cob.options.removed = items.splice(parseInt(evt.item.dataset.start, 10), 1)[0];
@@ -52,6 +55,7 @@ function Cobler(options) {
 						items.splice(getNodeIndex(evt.item), 0 , item);
 						evt.item.removeAttribute('data-start');
 						cob.publish('change', item);
+						cob.publish('reorder', item);
 					},
 					onStart: function (evt) {
 		        evt.item.dataset.start = getNodeIndex(evt.item);  // element index within parent
@@ -77,7 +81,7 @@ function Cobler(options) {
 					newItem.set(temp);
 					evt.newIndex = getNodeIndex(evt.item);
 				}
-				var renderedItem = renderItem(newItem);
+				var renderedItem = renderItem.call(this.owner,newItem);
 			 	var a = A.parentNode.replaceChild(renderedItem, A);
 				items.splice(evt.newIndex, 0 , newItem);
 				if(typeof newItem.initialize !== 'undefined'){
@@ -90,9 +94,16 @@ function Cobler(options) {
 			 		cob.options.removed = false;
 			 	}
 			}
+			this.owner.publish('moved', newItem)
+		}
+		function eventManager(e){
+			if(typeof e.target.dataset.event !== 'undefined'){
+				cob.publish(e.target.dataset.event, items[getNodeIndex(e.target.parentElement.parentElement.parentElement)])
+			}
 		}
 		function instanceManager(e) {
-			var referenceNode = e.target.parentElement.parentElement;
+
+			var referenceNode = e.target.parentElement.parentElement.parentElement;
 			var classList = e.target.className.split(' ');
 			if(classList.indexOf('remove-item') >= 0){
 				var olditem = items.splice(getNodeIndex(referenceNode), 1);
@@ -108,8 +119,6 @@ function Cobler(options) {
 			}else if(e.target.tagName === 'LI' && target.className.indexOf('cobler_select') != -1) {
 				deactivate();
 				activate(e.target);
-			}else if(typeof e.currentTarget.dataset.event !== 'undefined'){
-				cob.publish(e.currentTarget.dataset.event, referenceNode)
 			}
 		}
 		function activate(targetEL) {
@@ -122,7 +131,7 @@ function Cobler(options) {
 		function update(data, item) {
 			var item = item || items[active];
 			item.set(data);
-			var temp = renderItem(item);
+			var temp = renderItem.call(cob,item);
 			temp.className += ' ' + cob.options.active;
 			var modEL = elementOf(item);
 		 	var a = modEL.parentNode.replaceChild(temp, modEL);
@@ -133,10 +142,6 @@ function Cobler(options) {
 		}
 		
 		function deactivate() {
-			// if(typeof myBerry !== 'undefined'){
-			// 	myBerry.destroy();
-			// 	myBerry = undefined;
-			// }
 			active = null;
 			var elems = target.getElementsByClassName(cob.options.active);
 			[].forEach.call(elems, function(el) {
@@ -152,7 +157,7 @@ function Cobler(options) {
 			}
 		}
 		function addItem(widgetType, index, silent) {
-			if(typeof Cobler.types[widgetType.widgetType || widgetType] === 'undefined') {
+			if(typeof widgetType === 'undefined' || typeof Cobler.types[widgetType.widgetType || widgetType] === 'undefined') {
 				return false;
 			}
 			index = index || items.length;
@@ -161,7 +166,7 @@ function Cobler(options) {
 				newItem.set(widgetType);
 			}
 			items.splice(index, 0, newItem);
-			var renderedItem = renderItem(newItem);
+			var renderedItem = renderItem.call(this.owner, newItem);
 			target.insertBefore(renderedItem, target.querySelectorAll(':scope > LI')[index]);
 			if(typeof newItem.initialize !== 'undefined'){
 				newItem.initialize(renderedItem)
@@ -171,12 +176,12 @@ function Cobler(options) {
 				cob.publish('change', newItem)
 			}
 		}
-		function toJSON(obj) {
+		function toJSON(opts) {
 			var json = [];
 			for(var i in items){
-				json.push(items[i].toJSON());
+				json.push(items[i].toJSON(opts));
 			}
-			if(obj)return {target: target.dataset.id, items: json};
+			if(opts.object)return {target: target.dataset.id, items: json};
 			return json;
 		}
 		function toHTML() {
@@ -190,6 +195,7 @@ function Cobler(options) {
 			reset();
 			if(typeof sortable !== 'undefined') { sortable.destroy(); }
 			target.removeEventListener('click', instanceManager);
+			target.removeEventListener('click', eventManager);
 		}
 		function indexOf(item){
 			return items.indexOf(item);
@@ -217,12 +223,11 @@ function Cobler(options) {
 		var EL;
 		if(options.disabled){
 			EL = document.createElement('DIV');
-			EL.innerHTML = item.render();
 		} else {
 			EL = document.createElement('LI');
-			EL.innerHTML = templates.itemContainer.render();
-			EL.getElementsByClassName('cobler-li-content')[0].innerHTML = item.render();
 		}
+		EL.innerHTML = templates[item.template || this.options.itemContainer].render(item.get(), templates);
+		EL.getElementsByClassName(item.target || this.options.itemTarget)[0].innerHTML += item.render();
 		return EL;
 	}
 	function getNodeIndex(node) {
@@ -272,15 +277,13 @@ function Cobler(options) {
 
 Cobler.types = {};
 
-
 berryEditor = function(container){
 	return function(){
 		var formConfig = {
 			renderer: 'tabs', 
 			attributes: this.get(), 
 			fields: this.fields,
-			autoDestroy: true,
-			legend: 'Edit '+ this.get()['widgetType']
+			autoDestroy: true
 		}
 		var opts = container.owner.options;
 		var events = 'save';
