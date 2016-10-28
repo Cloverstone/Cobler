@@ -98,18 +98,28 @@ function Cobler(options) {
 		}
 		function eventManager(e){
 			if(typeof e.target.dataset.event !== 'undefined'){
-				cob.publish(e.target.dataset.event, items[getNodeIndex(e.target.parentElement.parentElement.parentElement)])
+				var referenceNode = e.target.parentElement;
+				while(referenceNode !== null && !referenceNode.classList.contains('slice') && !referenceNode.classList.contains('widget')){
+					referenceNode = referenceNode.parentElement;
+				}
+
+				cob.publish(e.target.dataset.event, items[getNodeIndex(referenceNode)])
 			}
 		}
 		function instanceManager(e) {
+			var referenceNode = e.target.parentElement;
+			while(referenceNode !== null && !referenceNode.classList.contains('slice') && !referenceNode.classList.contains('widget')){
+				referenceNode = referenceNode.parentElement;
+			}
 
-			var referenceNode = e.target.parentElement.parentElement.parentElement;
 			var classList = e.target.className.split(' ');
 			if(classList.indexOf('remove-item') >= 0){
-				var olditem = items.splice(getNodeIndex(referenceNode), 1);
-				target.removeChild(referenceNode);
-			 	cob.publish('remove', olditem);
-			 	cob.publish('change', olditem);
+				if(confirm('Are you sure you want to delete this widget?')){
+					var olditem = items.splice(getNodeIndex(referenceNode), 1);
+					target.removeChild(referenceNode);
+				 	cob.publish('remove', olditem);
+				 	cob.publish('change', olditem);
+			 	}
 			}else if(classList.indexOf('duplicate-item') >= 0){
 				deactivate();
 				var index = getNodeIndex(referenceNode);
@@ -167,7 +177,11 @@ function Cobler(options) {
 			}
 			items.splice(index, 0, newItem);
 			var renderedItem = renderItem.call(this.owner, newItem);
-			target.insertBefore(renderedItem, target.querySelectorAll(':scope > LI')[index]);
+
+			target.insertBefore(renderedItem, target.childNodes[index]);
+
+			// target.insertBefore(renderedItem, target.querySelectorAll(':scope > LI')[index]);
+
 			if(typeof newItem.initialize !== 'undefined'){
 				newItem.initialize(renderedItem)
 			}
@@ -226,6 +240,7 @@ function Cobler(options) {
 		} else {
 			EL = document.createElement('LI');
 		}
+		EL.className = 'slice';
 		EL.innerHTML = templates[item.template || this.options.itemContainer].render(item.get(), templates);
 		EL.getElementsByClassName(item.target || this.options.itemTarget)[0].innerHTML += item.render();
 		return EL;
@@ -277,21 +292,23 @@ function Cobler(options) {
 
 Cobler.types = {};
 
+
 berryEditor = function(container){
 	return function(){
-		var formConfig = {
-			renderer: 'tabs', 
+		var formConfig = $.extend(true, {}, {
+			// renderer: 'tabs', 
 			attributes: this.get(), 
 			fields: this.fields,
 			autoDestroy: true
-		}
+		}, this.formOptions || {});
+
 		var opts = container.owner.options;
 		var events = 'save';
 		if(typeof opts.formTarget !== 'undefined' && opts.formTarget.length){
 			formConfig.actions = false;
 			events = 'change';
 		}	
-		var myBerry = new Berry(formConfig, opts.formTarget ||  $(container.elementOf(this)));
+		var myBerry = new Berry(formConfig, this.formTarget || $(container.elementOf(this)).find('.panel-body'));
 		myBerry.on(events, function(){
 		 	container.update(myBerry.toJSON(), this);
 		 	container.deactivate();
