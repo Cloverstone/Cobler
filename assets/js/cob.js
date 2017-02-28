@@ -76,7 +76,8 @@ function Cobler(options) {
 			 	if(typeof A.dataset.type !== 'undefined') {
 					newItem = new Cobler.types[A.dataset.type](this);
 				}else{
-					var temp = cob.options.removed.get();
+					// var temp = cob.options.removed.get();
+					var temp = cob.options.removed.toJSON({editor:true});
 					newItem = new Cobler.types[temp.widgetType](this);
 					newItem.set(temp);
 					evt.newIndex = getNodeIndex(evt.item);
