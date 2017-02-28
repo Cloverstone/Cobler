@@ -1,437 +1,199 @@
-//		CoblerJS 0.1.3
-//		(c) 2011-2014 Adam Smallcomb
+//		CoblerJS 0.2.0
+//		(c) 2011-2016 Adam Smallcomb
 //		Licensed under the MIT license.
 //		For all details and documentation:
 //		https://github.com/Cloverstone/Cobler
 
-function cobler(options){
-	this.clear = function() {
-		this.deselect();
-		$('#cb-content').empty();
-		this.slices = [];
-		this.$el.find('#cb-starter').remove();
-		this.$el.find('#cb-content').remove();
+function Cobler(options) {
+  var topics = {};
 
-		if(this.options.editable){
-			this.$el.append(Berry.render('cobler_init', this,options));
-			$('#cb-content').sortable({
-				cursor: 'move',
-				//items: "> li:not(.selected)",
-     		items: "li:not(.locked)",
-				placeholder: 'cb-placeholder',
-				forcePlaceholderSize: true,
-				axis: this.options.axis,
-				 start: function(event,ui) {
-				 	$('.cb-placeholder').attr('data-name',$(ui.item[0]).attr('data-name')).addClass($(ui.item[0]).attr('class'));
-				 },
-				stop: $.proxy(function(event, ui) {
-					this.slices.splice($(ui.item).index(), 0, this.slices.splice(getSliceIndex($(ui.item).attr('id')), 1)[0]);
-					cobler.changed = true;
-					this.trigger('change');
-				}, this),
-				cancel: '#cb-content li .cobler-li-content, #cb-content li.locked',
-				receive: function(e, ui) {
-					copyHelper = null;
-				}
-			});//.disableSelection();
-		}else{
-			this.$el.append(Berry.render('cobler_init_noedit',this,options));
-		}
-	};
+	this.options = options
+	this.options.active = this.options.active || 'widget_active';
+	//simple event bus with the topics object bound
+  this.subscribe = function(topic, listener) {
+    if(!topics[topic]) topics[topic] = [];
+    topics[topic].push(listener);
+  }.bind({topics: topics})
+  this.publish = function(topic, data) {
+    if(!topics[topic] || topics[topic].length < 1) return;
+    topics[topic].forEach(function(listener) {
+      listener(data || {});
+    });
+  }.bind({topics: topics})
 
-	this.reload = function() {
-		var temp = this.toJSON();
-		this.clear();
-		this.load(temp);
-	};
+  //initialize collections array and then create a collection for each target
+	var c = [];
+	for(var i in options.targets){
+		addCollection.call(this, options.targets[i], options.items[i]);
+	}
 
-	this.load = function(slices) {
-		this.clear();
-		for(var i in slices) {
-			$('#cb-starter').hide();
-			var temp = new cobler.types[slices[i].widgetType](this, slices[i]);
-			if(temp.validate(slices[i], false)) {
-				$(temp.createEL()).appendTo('#cb-content');
-				this.slices.push(temp);
-			}
-			if(temp.callback) {
-				temp.callback.call(temp);
-			}
-		}
-	};
-
-	this.toJSON = function(options) {
-		var options = $.extend({}, this.options, options);
-		if(options.associative) {
-			json = {};
-			for(var i in this.slices) {
-				// json[this.slices[i].uuid] = this.slices[i].attributes;
-				json[this.slices[i].uuid] = this.slices[i].toJSON(true);
-			}
-			return json;
-		} else {
-			json = [];
-			for(var i in this.slices) {
-				// json.push(this.slices[i].attributes);
-				json.push(this.slices[i].toJSON(true));
-			}
-			return json;
-		}
-	};
-
-	this.toHTML = function(json) {
-		// if(typeof json === 'undefined') {
-		// 	json = this.toJSON();
-		// }
-		// var tempDiv = $('<div/>');
-		// var includes = '';
-		// for(var i in json) {
-		// 	cobler.types[json[i].type].toHTML(true).appendTo(tempDiv);
-		// 	if(cobler.types[json[i].type].include) {
-		// 		includes += cobler.types[json[i].type].include(json[i], true);
-		// 	}
-		// }
-		// var html = tempDiv.html() + includes;
-		// return html;
-		var tempDiv = $('<div/>');
-		for(var i in this.slices) {
-			//tempDiv.append(this.slices[i].toHTML(true));
-			tempDiv.append(this.slices[i].$el.find('.cobler-li-content').html());
-			// if(this.slices[i].callback) {
-			// 	this.slices[i].callback.call(this.slices[i]);
-			// }
-		}
-		return tempDiv.html();
-
-	};
-
-	this.add = function(name, attributes) {
-		var temp = new cobler.types[name](this, attributes);
-		if(temp.validate(temp.defaults, false)){
-			this.slices.push(temp);
-			select(temp.createEL().appendTo('#cb-content').hide().show('highlight'));
-			$('#cb-starter').hide();
-		}
-	};
-
-	this.updateWidget = function(thrower) {
-		if(this.selected){
-			this.selected.toJSON(false);
-
-			//if(thrower.force == true || this.selected.contentFields !== true) {
-			if(thrower.force == true || (typeof thrower.path !== 'undefined' && this.form.find(thrower.path).force == true) || this.selected.contentFields !== true) {
-				// /this.form.find(thrower.path).ignore
-				if(self.selected.editView && !thrower.force){
-					this.selected.$el.find('.cobler-li-content').html(this.selected.editView());
-					if(this.selected.contentFields){
-						this.form.each(function(){
-							$('.'+this.item.fieldset).append(this.$el)
-						})
+	function collection(target, items, cob){
+		var active;
+		var myBerry;
+		if(!cob.options.disabled) {
+			target.addEventListener('click', instanceManager);
+			Sortable.create(target, {
+				group: 'cb',
+				animation: 150,
+				onAdd: function (evt) {
+					var A = evt.item;
+					//handle if dragged over target and put back in original
+					if(A.parentNode === target) {
+						var newItem = Cobler.types[A.dataset.type]();
+					 	var a = A.parentNode.replaceChild(renderItem(newItem), A);
+						items.splice(evt.newIndex, 0 , newItem);
 					}
-						//this.selected.$el.replaceWith($(this.selected.createEL()).addClass('selected'));
-				}else{
-						this.selected.$el.replaceWith($(this.selected.createEL()).addClass('selected'));
-				}
-			}
-			if(this.selected.callback) {
-				this.selected.callback.call(this.selected);
-			}
+				}, onEnd: function (evt) {
+					items.splice(getNodeIndex(evt.item), 0 , items.splice(evt.item.dataset.start, 1)[0]);
+					cob.publish('change');
+				}, onStart: function (evt) {
+	        evt.item.dataset.start = getNodeIndex(evt.item);  // element index within parent
+	    	}
+			});
 		}
-		cobler.changed = true;
-		this.trigger('change');
-	};
-	
-	this.deselect = function() {
-		if(self.selected){
-			if(this.form) {
-				this.updateWidget({force: true});
-				this.form.destroy();
-				this.form = false;
-			}
-			self.selected.blur();
-			self.selected.$el.removeClass('selected');
-			self.selected = false;
-			this.trigger('editComplete');
+
+		load(items);
+		function reset(items) {
+			target.innerHTML = "";
+			items = items || [];
 		}
-	};
-
-	this.remove = function(id) {
-		if(!this.options.confirm || confirm("Are you sure you want to delete this widget?")){
-			var slice = getSlice(id) || this.selected;
-
-			if(slice.$el.hasClass('selected')) {
-				this.deselect();
-			}
-			if(slice){
-				slice.$el.fadeOut('fast', function() {
-					this.remove();
-					$('#cb-starter').toggle($('#cb-content > li').length === 0);
-				});
-
-				slice.remove();
-				this.slices.splice(getSliceIndex(slice.uuid), 1);
+		function instanceManager(e) {
+			var referenceNode = e.target.parentElement.parentElement;
+			var classList = e.target.className.split(' ');
+			if(classList.indexOf('remove-item') >= 0){
+				items.splice(getNodeIndex(referenceNode), 1);
+				target.removeChild(referenceNode);
+			 	cob.publish('change');
+			 	cob.publish('remove');
+			}else if(classList.indexOf('duplicate-item') >= 0){
+				deactivate();
+				var index = getNodeIndex(referenceNode);
+				addItem(items[index].toJSON(), index+1);
+			}else if(e.target.tagName === 'LI') {
+				activate(e.target);
 			}
 		}
-	};
-
-	this.duplicate = function(id) {
-		var slice = getSlice(id) || this.selected;
-		//this.add(slice.attributes.widgetType, $.extend(true, {}, slice.attributes));
-		var temp = new cobler.types[slice.attributes.widgetType](this, $.extend(true, {}, slice.attributes));
-		if(temp.validate(temp.attributes,false)) {
-			this.slices.push(temp);
-			select(temp.createEL().insertAfter(slice.$el).hide().show('highlight'));
+		function activate(targetEL) {
+			deactivate();
+			targetEL.className += ' ' + cob.options.active;
+			active = getNodeIndex(targetEL);
+			activeEl = targetEL;
+			cob.publish('activate');
+			myBerry = new Berry({renderer: 'tabs', actions: false, attributes: items[active].toJSON(), fields: items[active].fields}, $(cob.options.formTarget || document.getElementById('form'))).on('change', function(){
+				items[active].set(this.toJSON())
+				var temp = renderItem(items[active]);
+				temp.className += ' ' + cob.options.active;
+			 	var a = activeEl.parentNode.replaceChild(temp, activeEl);
+			 	activeEl = temp;
+			 	cob.publish('change')
+			});
 		}
-		if(temp.callback) {
-			temp.callback.call(temp);
+		function deactivate() {
+			if(typeof myBerry !== 'undefined'){
+				myBerry.destroy();
+				myBerry = undefined;
+			}
+			active = null;
+			activeEl = null;
+			var elems = target.getElementsByClassName(cob.options.active);
+			[].forEach.call(elems, function(el) {
+			    el.className = el.className.replace(cob.options.active, '');
+			});
 		}
-	};
-
-	this.addTypeDisplay = function(object){
-		if(this.options.types === 'all' || ($.inArray(object.category, this.options.types) > -1)){
-			$(Berry.render('cobler_widget', object )).appendTo('#cb-source');
+		function load(obj) {
+			reset(obj);
+			items = [];
+			for(var i in obj) {
+				addItem(obj[i],false,true);
+			}
+		}
+		function addItem(widgetType, index, silent) {
+			index = index || items.length;
+			var newItem = new Cobler.types[widgetType.widgetType || widgetType](this)
+			if(typeof widgetType !== 'string'){
+				newItem.set(widgetType);
+			}
+			items.splice(index, 0, newItem);
+			var renderedItem = renderItem(newItem);
+			target.insertBefore(renderedItem, target.getElementsByTagName("LI")[index]);
+			if(!silent){
+				activate(renderedItem);
+				cob.publish('change')
+			}
+		}
+		function toJSON() {
+			var json = [];
+			for(var i in items){
+				json.push(items[i].toJSON());
+			}
+			return json;
+		}
+		function toHTML() {
+			var temp = "";
+			for(var i in items){
+				temp += Cobler.types[items[i].widgetType].render(items[i]);
+			}
+			return temp;
+		}
+		return {
+			addItem: addItem,
+			toJSON: toJSON,
+			toHTML: toHTML,
+			deactivate: deactivate,
+			clear: reset,
+			load: load
 		}
 	}
 
-	var select = function(el) {
-		//if(self.selected) {self.selected.blur(); self.selected.$el.removeClass('selected');}
-
-		if(!$(el).hasClass('selected')) {
-			self.deselect();
-			self.selected = getSlice($(el).attr('id'));
-			self.selected.$el.addClass('selected');
-			if(self.options.autoedit) {
-				edit(el);
-			}
+	function renderItem(item){
+		var EL;
+		if(options.disabled){
+			EL = document.createElement('DIV');
+			EL.innerHTML = item.render();
+		} else {
+			EL = document.createElement('LI');
+			EL.innerHTML = templates.itemContainer.render();
+			EL.getElementsByClassName('cobler-li-content')[0].innerHTML = item.render();
 		}
-	};
-
-	var edit = function(el) {
-		if(self.form){
-			self.form.destroy();
-			self.form = false;
-		}
-		if(self.selected.editView){
-			self.selected.$el.find('.cobler-li-content').html(self.selected.editView());
-		}
-				//self.form = $('#cb-form').show().berry(getSlice($(el).attr('id')).toFORM());
-		self.form = $('#cb-form').show().berry(getSlice($(el).attr('id')).toFORM());
-		self.form.on('change', $.proxy(self.updateWidget, self));
-
-		self.trigger('edit');
-	};
-
-	var getSlice = function(id) {
-		for(var i in self.slices) {
-			if(self.slices[i].uuid == id) {
-				return self.slices[i];
-			}
-		}
-		return false;
-	};
-
-	var getSliceIndex = function(id) {
-		for(var i in self.slices) {
-			if(self.slices[i].uuid == id) {
-				return i;
-			}
-		}
-		return false;
-	};
-
-	this.options = $.extend({name: Berry.getUID(), types: 'all', target: '#content', axis: '', form: '#alt-sidebar', source: '#alt-sidebar', autoedit: true, associative: false, editable: true, confirm: true, activeFormClass: 'active'}, options);
-	var self = this;
-	this.selected = false;
-	this.form = false;
-
-	this.slices = [];
-	this.$el = $(this.options.target);
-	this.clear();
-	$(this.options.form).empty();
-	$(this.options.source).empty();
-
-	if($('#cb-source').length === 0) {
-		$(this.options.source).append(Berry.render('cobler_controls', options));
-		for(var i in cobler.types) {
-			this.addTypeDisplay(cobler.types[i].prototype);
-		}
+		return EL;
 	}
-	if($('#cb-form').length === 0) {
-		$(this.options.form).append(Berry.render('cobler_controls', options));
+	function getNodeIndex(node) {
+	  var index = 0;
+	  while (node = node.previousSibling) {
+	    if (node.nodeType != 3 || !/^\s*$/.test(node.data)) {
+	      index++;
+	    }
+	  }
+	  return index;
+	}
+	function addCollection(target, item){
+		c.push(new collection(target, item, this));
+	}
+	function addSource(element){
+		Sortable.create(element, {group: {name: 'cb', pull: 'clone', put: false}, sort: false });
+	}
+	function applyToEach(func){
+		return function(){
+			var temp = [];
+			for(var i in c) {
+				temp.push(c[i][func]());
+			}
+			this.publish(func);
+			return temp;
+		}.bind(this)
 	}
 
-
-	$(this.options.target).off('click', '#cb-content li span.remove-item');
-	$(this.options.target).on('click', '#cb-content li span.remove-item', $.proxy(function(e) {
-		e.stopPropagation();
-		this.remove($(e.target).parents('li').attr('id'));
-	}, this));
-
-	$('body').off('click', '#removeactive');
-	$(this.options.source).on('click', '#removeactive', $.proxy(function(e) {
-		e.stopPropagation();
-		if(this.selected){
-			this.remove(this.selected.uuid);
-		}
-	}, this));
-
-	$(this.options.target).off('click', '#cb-content li span.duplicate-item');
-	$(this.options.target).on('click', '#cb-content li span.duplicate-item', $.proxy(function(e) {
-		e.stopPropagation();
-		this.duplicate($(e.target).parents('li').attr('id'));
-	}, this));
-
-	$(this.options.target).off('click', '#cb-content > li');
-	$(this.options.source).off('click', '#cb-source > li');
-
-	if(this.options.editable){
-		$(this.options.target).on('click', '#cb-content > li', function() {
-			select(this);
-		});
-
-		$(this.options.source).on('click', '#cb-source > li', $.proxy(function(e) {
-			e.stopPropagation();
-			this.add($(e.target).closest('li').data('name'));
-			cobler.changed = true;
-			this.trigger('change');
-		}, this));
-	}
-
-	var copyHelper = null;
-	$('#cb-source').sortable({
-		connectWith: '#cb-content',
-		forcePlaceholderSize: true,
-		helper: function(e, li) {
-			li.clone().addClass('inUse').css({height:li.outerHeight(),width:li.outerWidth()}).insertAfter(li);
-			return li;
-		},
-		placeholder: 'cb-placeholder source',
-		stop: $.proxy(function(event,ui) {
-			if($(ui.item).parent().attr('id') == 'cb-source') {
-				$(event.target).sortable('cancel');
-					$('.inUse').remove();
-			} else {
-				var temp = new cobler.types[$(ui.item).data('name')](this);
-				if(temp.validate(temp.attributes, false)) {
-				//if(this.add($(ui.item).data('name')))
-					this.slices.splice($(ui.item).index(), 0, temp);
-					cobler.changed = true;
-					this.trigger('change');
-					$('.inUse').removeClass('inUse');
-					var domobj = $(temp.createEL());
-					$(ui.item).replaceWith(domobj);
-					select(domobj.hide().show('highlight'));
-					$('#cb-starter').hide();
-				} else {
-					$(event.target).sortable('cancel');
-					$('.inUse').remove();
-				}
-			}
-		}, this)
-	});//.disableSelection();
-
-
-	// window.onbeforeunload = function() {
-	// 	if(cobler.changed){
-	// 		return 'Any changes that you made will be lost.';
-	// 	}
-	// };
-
-	$(this.options.source).on('click', '#showwidgets', $.proxy(function(event){
-		this.deselect();
-	}, this));
-
-	this.on('editComplete', function(){
-		$('#showwidgets, #alt-sidebar .panel-heading').hide();
-		$('#cb-source').show();
-	});
-	this.on('edit', function() {
-		$('#showwidgets, #alt-sidebar .panel-heading').show();
-		$('#cb-source').hide();
-	});
-
-	cobler.instances[this.options.name] = this;
+	return {
+		collections: c,
+		addCollection: addCollection,
+		addSource: addSource,
+		toJSON: applyToEach.call(this,'toJSON'),
+		toHTML: applyToEach.call(this,'toHTML'),
+		clear: applyToEach.call(this,'clear'),
+		deactivate: applyToEach.call(this, 'deactivate'),
+		on: this.subscribe//,
+		//trigger: this.publish.bind(this)
+	};
 }
 
-
-cobler.register = function(object) {
-	cobler.types[object.type] = cobler.slice.extend(object);
-	if($('#cb-source').length > 0) {
-		//$(Berry.render('cobler_widget_cobler', object)).appendTo('#cb-source');
-		for(var i in cobler.instances){
-			cobler.instances[i].addTypeDisplay(object);
-		}
-			//$(Berry.render('cobler_widget_cobler', cobler.types[i].prototype )).appendTo('#cb-source');
-	}
-};
-
-cobler.types = {};
-
-cobler.slice = function(owner, initial) {
-	this.owner = owner;
-	this.attributes = {};
-	$.extend(true, this.attributes, this.defaults, initial, {widgetType: this.type});
-	this.uuid = Berry.getUID();
-};
-
-$.extend(cobler.slice.prototype, {
-	createEL: function() {
-		if(cb.options.editable) {
-			this.$el = $(Berry.render('cobler_element', this));
-		}else{
-			this.$el = $(Berry.render('cobler_element_noedit', this));
-		}
-		this.$el.find('.cobler-li-content').append(this.toHTML());
-		return this.$el;
-	},
-	validate: function() {return true;},
-	remove: function() {},
-	blur: function() {},
-	fields: [],
-	toFORM: function() {
-		return {label: this.display, inline: true, renderer: 'tabs', tabsTarget: $('#alt-sidebar .panel-heading'), actions: false, attributes: this.attributes, items:[], fields: this.fields};
-	},
-	toJSON: function(publishing) {
-		if(!publishing){
-			this.attributes = $.extend(this.attributes, this.owner.form.toJSON());
-		}
-		return this.attributes;
-	},
-	toHTML: function(publishing) {
-		if(typeof this.template !== 'undefined') {
-			if(typeof this.template === 'string') {
-				return Berry.render(this.template, $.extend({},this.filter,this.attributes));
-			} else {
-				return Berry.render(this.template(), $.extend({},this.filter,this.attributes));
-			}
-		}
-		return $('<div/>');
-	}
-});
-cobler.instances = {};
-cobler.slice.extend = Berry.field.extend;
-cobler.prototype.events = {initialize: []};
-cobler.prototype.addSub = Berry.prototype.addSub;
-cobler.prototype.on = Berry.prototype.on;
-cobler.prototype.off = Berry.prototype.off;
-cobler.prototype.trigger = Berry.prototype.trigger;
-
-cobler.changed = false;
-
-$('body').keydown(function(event) {
-	switch(event.keyCode) {
-		case 27://escape
-				cb.deselect();
-			break;
-	}
-});
-
-function containsKey( list , keys ){
-	var returnArray = {};
-	for (var key in keys) {
-		if(typeof list[keys[key]] !== 'undefined'){
-			returnArray[keys[key]] = list[keys[key]];
-		}
-	}
-	return returnArray;
-}
+Cobler.types={};
