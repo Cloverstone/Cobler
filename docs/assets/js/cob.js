@@ -286,8 +286,8 @@ function Cobler(options) {
 		clear: applyToEach.call(this, 'clear'),
 		deactivate: applyToEach.call(this, 'deactivate'),
 		destroy: applyToEach.call(this, 'destroy'),
-		on: this.subscribe//,
-		//trigger: this.publish.bind(this)
+		on: this.subscribe,
+		trigger: this.publish
 	};
 }
 

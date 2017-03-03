@@ -28,3 +28,14 @@ function getOrdered() {
     return _.findWhere(items, {target: item})['items']
   })
 }
+
+
+
+        cb.on('change',function(){
+        	        $('.result').html("<pre>"+JSON.stringify(cb.toJSON({editor:true}), undefined, "  ")+"</pre>");
+        })
+        cb.on('moved',function(){
+        	        $('.result').html("<pre>"+JSON.stringify(cb.toJSON({editor:true}), undefined, "  ")+"</pre>");
+        })
+        cb.trigger('change');
+
