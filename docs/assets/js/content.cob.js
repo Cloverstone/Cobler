@@ -186,7 +186,7 @@ Cobler.types.RSS = function(container) {
 	};
 	var fields = {
 		Title: {},
-		Url: {value: 'http://www.binghamton.edu/photos/index.php/feed/'},
+		Url: {value: 'https://xkcd.com/rss.xml'},
 		Count: {value: 5, type: 'number'},
 	}
 	return {

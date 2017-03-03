@@ -57,7 +57,7 @@
 				</div><!--/span-->
 
 				<div class="col-md-6">
-					<a class="btn btn-default" href="https://github.com/Cloverstone/Cobler/archive/master.zip"><i class="fa fa-code"></i> Get Code</a>
+					<a class="btn btn-default" href="https://github.com/Cloverstone/Cobler/archive/master.zip"><i class="fa fa-download"></i> Get Code</a>
 				</div><!--/span-->
 			</div><!--/row-->
 
@@ -110,7 +110,7 @@
 
 
 		<script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js'></script>
-		<script type='text/javascript' src='//twitter.github.com/hogan.js/builds/3.0.1/hogan-3.0.1.js'></script>
+		<script type='text/javascript' src='//cdnjs.cloudflare.com/ajax/libs/hogan.js/3.0.2/hogan.min.js'></script>
 
 		<!-- // <script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3//jquery-ui.min.js'></script> -->
 		<script type='text/javascript' src='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'></script>
@@ -118,7 +118,7 @@
 		<script type='text/javascript' src='assets/js/berry.min.js'></script>
 		<script type='text/javascript' src='assets/js/bootstrap.berry.js'></script>
 		<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
-		<script type="text/javascript" src="assets/js/sortable.js"></script>
+		<script type="text/javascript" src="//rubaxa.github.io/Sortable/Sortable.js"></script>
 
 		<script type='text/javascript' src='assets/js/cob.js'></script>
 		<script type='text/javascript' src='assets/js/content.cob.js'></script>		
@@ -133,13 +133,12 @@
 			</div>
 		</script>
 		<script>
+			templates['itemContainer'] = Hogan.compile(document.getElementsByName('itemContainer')[0].innerHTML);
 
-					templates['itemContainer'] = Hogan.compile(document.getElementsByName('itemContainer')[0].innerHTML)
+			cb = new Cobler({ disabled: false, targets: document.getElementsByClassName('widget_container'), items:[[]]})
 
-		cb = new Cobler({ disabled: false, targets: document.getElementsByClassName('widget_container'), items:[[]]})
-
-		list = document.getElementById('sortableList');
-		cb.addSource(list);
+			list = document.getElementById('sortableList');
+			cb.addSource(list);
 		</script>
 	</body>
 </html>
