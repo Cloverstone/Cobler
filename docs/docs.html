@@ -65,8 +65,26 @@
 					<ul class>
 						<li class="list-unstyled" ><a href="#targets"><i class="fa fa-chevron-right"></i> targets</a></li>
 						<li class="list-unstyled" ><a href="#items"><i class="fa fa-chevron-right"></i> items</a></li>
+						<li class="list-unstyled" ><a href="#disabled"><i class="fa fa-chevron-right"></i> disabled</a></li>
+						<li class="list-unstyled" ><a href="#itemContainer"><i class="fa fa-chevron-right"></i> itemContainer</a></li>
+						<li class="list-unstyled" ><a href="#itemTarget"><i class="fa fa-chevron-right"></i> itemTarget</a></li>
 	
-					</ul>
+	
+					</ul>					
+					<a href="#events"><h4>Events</h4></a>
+					<a href="#type"><h4>Type Spec</h4></a>
+					<ul class>
+						<li class="list-unstyled" ><a href="#fields"><i class="fa fa-chevron-right"></i> fields</a></li>
+						<li class="list-unstyled" ><a href="#render"><i class="fa fa-chevron-right"></i> render</a></li>
+						<li class="list-unstyled" ><a href="#toJSON"><i class="fa fa-chevron-right"></i> toJSON</a></li>
+						<li class="list-unstyled" ><a href="#edit"><i class="fa fa-chevron-right"></i> edit</a></li>
+						<li class="list-unstyled" ><a href="#get"><i class="fa fa-chevron-right"></i> get</a></li>
+						<li class="list-unstyled" ><a href="#set"><i class="fa fa-chevron-right"></i> set</a></li>
+						<li class="list-unstyled" ><a href="#initialize"><i class="fa fa-chevron-right"></i> initialize</a></li>
+						<li class="list-unstyled" ><a href="#container"><i class="fa fa-chevron-right"></i> container</a></li>
+	
+	
+					</ul>		
 	<!-- 				<ul class>
 						<li class="list-unstyled" ><a href="#color"><i class="fa fa-chevron-right"></i> Tests</a></li>
 					</ul> -->
@@ -76,12 +94,12 @@
 				</div><!--/span-->
 				<div class="col-xs-12 col-sm-9">
 					<!--Introduction -->
-					<a name="intro" style="display:block;position:relative;top:-80px"></a>
+					<a name="intro" style="display:block;position:relative;top:-40px"></a>
 					<h2>Cobler</h2>
 
 
 					<!--Getting Started -->
-					<a name="getting_started" style="display:block;position:relative;top:-80px"></a>
+					<a name="getting_started" style="display:block;position:relative;top:-40px"></a>
 					<br>
 					<h4>Getting Started</h4>
 					<p><b>Dependencies</b> - Cobler.js (COntent BuiLER) depends on sortable.js and adds the ability to drag items around that are defined by JSON objects that can have visual components. This can be used to construct various types of content depending on the individual 'slices' defined. Stock components exist for building forms with Berry.js ad for building out generic content. The stock components rely on several more libraries such as Berry.js, hogan.js, jQuery, and Bootstrap</p>
@@ -104,38 +122,113 @@
 </code></pre>
 
 					<!--Api -->
-					<a name="api" style="display:block;position:relative;top:-80px"></a>
+					<a name="api" style="display:block;position:relative;top:-40px"></a>
 					<br>
 					<h4>API</h4>
+
+					<h5>addSource<H5>
+					<h5>toHTML<H5>
+					<h5>toJSON<H5>
+						<code>{editor: true}</code>
+					<h5>destory<H5>
+
+
+
 
 
 
 					<!--options -->
-					<a name="options" style="display:block;position:relative;top:-80px"></a>
+					<a name="options" style="display:block;position:relative;top:-40px"></a>
 					<br>
 					<h3>Options</h3>
 					<pre><code class="prettyprint">var options = {
   targets: document.getElementByID('target')
   items: [[]]
 };</code></pre>
-					<!--legend -->
-					<a name="targets" style="display:block;position:relative;top:-80px"></a>
+					<a name="targets" style="display:block;position:relative;top:-40px"></a>
 					<br>
 					<h4>targets</h4>					
 					<p>
 					</p>
-					<a name="items" style="display:block;position:relative;top:-80px"></a>
+					<a name="items" style="display:block;position:relative;top:-40px"></a>
 					<br>
 					<h4>items</h4>					
 					<p>
-
 					</p>
-					<blockquote></blockquote>
-
+					<a name="disabled" style="display:block;position:relative;top:-40px"></a>
+					<br>
+					<h4>disabled</h4>					
+					<p>
+					</p>
+					<a name="itemContainer" style="display:block;position:relative;top:-40px"></a>
+					<br>
+					<h4>itemContainer</h4>					
+					<p>
+					</p>
+					<a name="itemTarget" style="display:block;position:relative;top:-40px"></a>
+					<br>
+					<h4>itemTarget</h4>					
+					<p>
+					</p>
 					<hr>
 
+					<!--events -->
+					<a name="events" style="display:block;position:relative;top:-40px"></a>
+					<br>
+					<h3>Events</h3>
+					<h5>activate<H5>
+					<h5>deactivate<H5>
+					<h5>change<H5>
+					<h5>add<H5>
+					<h5>remove<H5>
+					<h5>reorder<H5>
+					<h5>moved<H5>
 
-
+					<!--options -->
+					<a name="type" style="display:block;position:relative;top:-40px"></a>
+					<br>
+					<h3>Type spec</h3>
+					<p></p>
+					<a name="fields" style="display:block;position:relative;top:-40px"></a>
+					<br>
+					<h4>fields</h4>					
+					<p>
+					</p>
+					<a name="render" style="display:block;position:relative;top:-40px"></a>
+					<br>
+					<h4>render</h4>					
+					<p>
+					</p>
+					<a name="toJSON" style="display:block;position:relative;top:-40px"></a>
+					<br>
+					<h4>toJSON</h4>					
+					<p>
+					</p>
+					<a name="edit" style="display:block;position:relative;top:-40px"></a>
+					<br>
+					<h4>edit</h4>					
+					<p>
+					</p>
+					<a name="get" style="display:block;position:relative;top:-40px"></a>
+					<br>
+					<h4>get</h4>					
+					<p>
+					</p>
+					<a name="set" style="display:block;position:relative;top:-40px"></a>
+					<br>
+					<h4>set</h4>					
+					<p>
+					</p>
+					<a name="initialize" style="display:block;position:relative;top:-40px"></a>
+					<br>
+					<h4>initialize</h4>					
+					<p>
+					</p>
+					<a name="container" style="display:block;position:relative;top:-40px"></a>
+					<br>
+					<h4>container</h4>					
+					<p>
+					</p>
 
 					<hr>
 					<footer>
