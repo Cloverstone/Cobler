@@ -53,7 +53,7 @@
 			<div class="row">
  				<div class="col-md-4 col-xs-12" data-id="first">
 					<div class="panel panel-default">
-					  <div class="panel-heading"><b>Fieldset 0</b></div>
+					  <div class="panel-heading"><b>Target 0</b></div>
 					  <div class="panel-body">
 							<div style="min-height:200px" class="widget_container" data-id="first"></div>	
 					  </div>
@@ -62,7 +62,7 @@
 				</div>
 				<div class="col-md-4 col-xs-12" data-id="second">
 						<div class="panel panel-success">
-						  <div class="panel-heading"><b>Fieldset 1</b></div>
+						  <div class="panel-heading"><b>Target 1</b></div>
 						  <div class="panel-body">
 								<div style="min-height:200px" class="widget_container" data-id="second"></div>
 					  	</div>
@@ -70,7 +70,7 @@
 					</div>				
 					<div class="col-md-4 col-xs-12" data-id="third">
 						<div class="panel panel-warning">
-						  <div class="panel-heading"><b>Fieldset 2</b></div>
+						  <div class="panel-heading"><b>Target 2</b></div>
 						  <div class="panel-body">
 								<div class="target"></div>
 								<div id="neweditor" style="min-height:200px" class="widget_container" data-id="third"></div>
@@ -110,7 +110,7 @@
 		<script type="text/javascript" src="assets/js/bin/full.berry.min.js"></script>
 		
 		<script type='text/javascript' src='assets/js/cob.js'></script>
-		<script type='text/javascript' src='assets/js/content.cob.js'></script>		
+		<!-- // <script type='text/javascript' src='assets/js/content.cob.js'></script>		 -->
 		<!-- // <script type='text/javascript' src='assets/js/form.cob.js'></script>		 -->
 		<script type='text/javascript' src='//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js'></script>		
 		<script type='text/javascript' src='//cdn.tinymce.com/4/tinymce.min.js'></script>
@@ -148,10 +148,8 @@
 			templates['itemContainer'] = Hogan.compile(document.getElementsByName('itemContainer')[0].innerHTML)
 			templates['berry_fieldset'] = Hogan.compile(document.getElementsByName('berry_fieldset')[0].innerHTML)
 
-
-
 		</script>
-				<script type='text/javascript' src='assets/js/content.js'></script>
+				<script type='text/javascript' src='assets/js/demo.js'></script>
 
 		<script type='text/javascript' >
 			$('body').keydown(function(event) {

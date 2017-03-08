@@ -70,6 +70,10 @@
 						<li class="list-unstyled" ><a href="#itemTarget"><i class="fa fa-chevron-right"></i> itemTarget</a></li>
 	
 	
+					</ul>
+					<a href="#collections"><h4>Collections</h4></a>
+					<ul class>
+						<li class="list-unstyled" ><a href="#addItem"><i class="fa fa-chevron-right"></i> addItem</a></li>
 					</ul>					
 					<a href="#events"><h4>Events</h4></a>
 					<a href="#type"><h4>Type Spec</h4></a>
@@ -127,14 +131,14 @@
 					<h4>API</h4>
 
 					<h5>addSource<H5>
+					<h5>addCollection<H5>
+
 					<h5>toHTML<H5>
 					<h5>toJSON<H5>
 						<code>{editor: true}</code>
 					<h5>destory<H5>
-
-
-
-
+					<h5>clear<H5>
+					<h5>deactivate<H5>
 
 
 					<!--options -->
@@ -142,23 +146,26 @@
 					<br>
 					<h3>Options</h3>
 					<pre><code class="prettyprint">var options = {
-  targets: document.getElementByID('target')
+  targets: [document.getElementById('target')]
   items: [[]]
 };</code></pre>
 					<a name="targets" style="display:block;position:relative;top:-40px"></a>
 					<br>
 					<h4>targets</h4>					
 					<p>
+						An array of elements that are acceptable targets for dragable elements.
 					</p>
 					<a name="items" style="display:block;position:relative;top:-40px"></a>
 					<br>
-					<h4>items</h4>					
+					<h4>items</h4>		
 					<p>
+						An array of arrays where the inner arrays contain objects each representing one slice of the cobler.
 					</p>
 					<a name="disabled" style="display:block;position:relative;top:-40px"></a>
 					<br>
-					<h4>disabled</h4>					
+					<h4>disabled</h4>			
 					<p>
+						If the Cobler instance is disabled then the html representation of each slice is rendered but moving and editing is disabled. This is used to render the result when not editing it.
 					</p>
 					<a name="itemContainer" style="display:block;position:relative;top:-40px"></a>
 					<br>
@@ -172,62 +179,106 @@
 					</p>
 					<hr>
 
+					<!--Collections -->
+					<a name="collections" style="display:block;position:relative;top:-40px"></a>
+					<br>
+					<h3>Collections</h3>
+					<p></p>
+					<a name="addItem" style="display:block;position:relative;top:-40px"></a>
+					<br>
+					<h4>addItem</h4>
+					<p>
+
+	<!-- 		load: loadItems,
+			update: update.bind(this),
+			indexOf: indexOf,
+			elementOf: elementOf -->
+								</p>
+					<hr>
+
+
 					<!--events -->
 					<a name="events" style="display:block;position:relative;top:-40px"></a>
 					<br>
 					<h3>Events</h3>
-					<h5>activate<H5>
-					<h5>deactivate<H5>
-					<h5>change<H5>
-					<h5>add<H5>
-					<h5>remove<H5>
-					<h5>reorder<H5>
-					<h5>moved<H5>
+					<p>Cobler utilizes a pub/sub event system, an event can be subscribed to by calling the 'on' methed of an instantiated Cobler. <code>cb.on('change', function(e){ console.log(e); });</code> 
+						Events can also be triggered via <code>cb.trigger('change')</code> The following are the internal events that are triggered</p>
+					<h5>activate</h5>
+						<p>
+							triggered when a slice has been selected as the active slice
+						</p>
+					<h5>deactivate</h5>
+						<p>
+							triggered when a slice has been deactivated
+						</p>
+					<h5>change</h5>
+						<p>
+							triggered when the values of any slice are triggered
+						</p>
+					<h5>add</h5>
+						<p>
+							triggered when a slice is added to a collection including being moved from another collection
+						</p>
+					<h5>remove</h5>
+						<p>
+							triggered when a slice is removed from a collection including when being moved to a new collection
+						</p>
+					<h5>reorder</h5>
+						<p>
+							triggered when the order of slices in a collection changes
+						</p>
+					<h5>moved</h5>
+						<p>
+							triggered when a slice is moved in anyway, either order or to a new collection
+						</p>
+					<hr>
 
 					<!--options -->
 					<a name="type" style="display:block;position:relative;top:-40px"></a>
 					<br>
 					<h3>Type spec</h3>
-					<p></p>
-					<a name="fields" style="display:block;position:relative;top:-40px"></a>
-					<br>
-					<h4>fields</h4>					
-					<p>
-					</p>
+					<p>In order for Cobler.js to really be useful in any meaningful way we must define at least one type of 'slice' to be used. Each type of slice used by cobler needs to have its own api filled in to so that it can be interacted with. Often thes slices are packed together for similar goals, i.e. a form builder.</p>
 					<a name="render" style="display:block;position:relative;top:-40px"></a>
 					<br>
-					<h4>render</h4>					
+					<h4>render</h4>
 					<p>
+						The render function recieves no inputs and returns the html for the view of the slice.
 					</p>
 					<a name="toJSON" style="display:block;position:relative;top:-40px"></a>
 					<br>
-					<h4>toJSON</h4>					
+					<h4>toJSON</h4>
 					<p>
+						This function should return the JSON representation of this slice including all information needed to reconstruct it from scratch including the 'widgetType'
 					</p>
 					<a name="edit" style="display:block;position:relative;top:-40px"></a>
 					<br>
-					<h4>edit</h4>					
+					<h4>edit</h4>
 					<p>
+						This funciton is called when the 'slice' goes into edit mode and should to get back out of edit mode the slice should be updated with new data.
 					</p>
 					<a name="get" style="display:block;position:relative;top:-40px"></a>
 					<br>
-					<h4>get</h4>					
+					<h4>get</h4>
 					<p>
+						Returns data needed to rerender the object this can be a subset of the toJSON function or completely different and does not need to include the 'widgetType'
 					</p>
 					<a name="set" style="display:block;position:relative;top:-40px"></a>
 					<br>
-					<h4>set</h4>					
+					<h4>set</h4>
 					<p>
+						This is a function that is passed an object that should update/initialize the slice
 					</p>
 					<a name="initialize" style="display:block;position:relative;top:-40px"></a>
 					<br>
 					<h4>initialize</h4>					
 					<p>
+						This function is triggered after the render function and can access the dom of the slice.
 					</p>
 					<a name="container" style="display:block;position:relative;top:-40px"></a>
 					<br>
 					<h4>container</h4>					
 					<p>
+						This is a reference to the outer draggable container that this slice lives inside of.
 					</p>
 
 					<hr>
