@@ -24,3 +24,12 @@
 .opaque.cobler_container > li:hover{outline:0;}*/
 
 .widget_container{min-height: 50px}
+	.cobler_container:empty:before{
+		content: 'Drop here';
+		outline: dashed 3px #EEE;
+		font-weight:bold;
+		display: block;
+		color:#CCC;
+		text-align:center;
+		padding: 20px
+	}
