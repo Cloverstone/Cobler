@@ -1,4 +1,4 @@
-//		CoblerJS 0.2.0
+//		CoblerJS 0.2.1
 //		(c) 2011-2016 Adam Smallcomb
 //		Licensed under the MIT license.
 //		For all details and documentation:
@@ -261,6 +261,7 @@ function Cobler(options) {
 		collections.push(newCol);
 	}
 	function addSource(element){
+		debugger;
 		Sortable.create(element, {
 			group: {name: 'cb', pull: 'clone', put: false}, 
 			sort: false 
