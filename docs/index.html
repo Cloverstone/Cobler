@@ -62,6 +62,9 @@
 			</div><!--/row-->
 
 			<hr>
+			<p>An extension of <a href="https://rubaxa.github.io/Sortable/">Sortable.js</a> Cobler allows for visual manipulation and Building of a JSON object that can be used to describe Content.</p>
+			<p>Comes pre-built for <a href="http://cloverstone.github.io/Cobler/demo.html">content</a> building and <a href="http://cloverstone.github.io/Berry/demo.html">form</a> building.</p>
+			<hr>
 			<h4>Basic Usage</h4>
 	<pre><code class="prettyprint">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
@@ -69,13 +72,12 @@
     &lt;style src='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'&gt;&lt;/style&gt;
     &lt;script src='//twitter.github.com/hogan.js/builds/3.0.1/hogan-3.0.1.js'&gt;&lt;/script&gt;
     &lt;script src='//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js'&gt;&lt;/script&gt;
-    &lt;script type='text/javascript' src='berry.min.js'&gt;&lt;/script&gt;
-    &lt;script type='text/javascript' src='bootstrap.berry.js'&gt;&lt;/script&gt;
+    &lt;script type='text/javascript' src='assets/js/cob.js'&gt;&lt;/script&gt;
+    &lt;script type='text/javascript' src='assets/js/content.cob.js'&gt;&lt;/script&gt;
+
     &lt;script type="text/javascript"&gt;
       cb = new Cobler({ disabled: false, targets: document.getElementsByClassName('widget_container'), items:data})
-
-      list = document.getElementById('sortableList');
-      cb.addSource(list);
+      cb.addSource(document.getElementById('sortableList'));
     &lt;/script&gt;
   &lt;/head&gt;
   &lt;body&gt;
@@ -90,6 +92,7 @@
 			    <ul id="sortableList" class="list-group">
 				  <li class="list-group-item" data-type="Content"><a href="javascript:void(0);">Content</a></li>
                 </ul>
+				<div style="text-align:center"><p><b>Drag this box ^ onto the target -></b></p></div>
 				</div>
 				<div class="col-md-9 col-xs-12" data-id="first">
 					<div class="panel panel-default">
