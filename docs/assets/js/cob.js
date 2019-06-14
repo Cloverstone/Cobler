@@ -118,8 +118,9 @@ function Cobler(options) {
 				if(confirm('Are you sure you want to delete this widget?')){
 					var olditem = items.splice(getNodeIndex(referenceNode), 1);
 					target.removeChild(referenceNode);
-				 	cob.publish('remove', olditem);
-				 	cob.publish('change', olditem);
+					cob.publish('deactivate', olditem);
+					cob.publish('remove', olditem);
+					cob.publish('change', olditem);
 			 	}
 			}else if(classList.indexOf('duplicate-item') >= 0){
 				deactivate();
